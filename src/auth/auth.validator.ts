@@ -1,5 +1,5 @@
 import { IsBoolean, IsDefined, IsEmail, IsString } from 'class-validator';
-import { Birth, Gender, KoreanPhoneNumber, Password, UserName } from 'src/common.types';
+import { Birth, Gender, KoreanPhoneNumber, Password } from 'src/common.types';
 import {
   IsBirthDate,
   IsGender,
@@ -26,7 +26,7 @@ import {
 export class UserSignInValidator {
   @IsDefined()
   @IsString()
-  public userName: UserName;
+  public userName: string;
 
   @IsDefined()
   @IsBirthDate()
