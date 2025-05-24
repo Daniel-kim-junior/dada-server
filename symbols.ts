@@ -1,0 +1,17 @@
+export const Symbols = {
+  UsersService: Symbol.for('UsersService'),
+  UsersController: Symbol.for('UsersController'),
+  OrganizationsService: Symbol.for('OrganizationsService'),
+  OrganizationsController: Symbol.for('OrganizationsController'),
+  AuthService: Symbol.for('AuthService'),
+  AuthController: Symbol.for('AuthController'),
+  ClassroomsService: Symbol.for('ClassroomsService'),
+  ClassroomsController: Symbol.for('ClassroomsController'),
+  LecturesController: Symbol.for('LecturesController'),
+  LecturesService: Symbol.for('LecturesService'),
+  ProfilesService: Symbol.for('ProfilesService'),
+  ProfilesController: Symbol.for('ProfilesController'),
+  NoticesService: Symbol.for('NoticesService'),
+  NoticesController: Symbol.for('NoticesController'),
+  ConfigReader: Symbol.for('ConfigReader'),
+};
