@@ -1,6 +1,15 @@
-import { IsBoolean, IsDefined, IsString } from 'class-validator';
-import { Birth, Email, Gender, Password, PhoneNumber } from 'src/brand.types';
-import { IsBirthDate } from 'src/custom-validators/birth';
+import { IsBoolean, IsDefined, IsEmail, IsString } from 'class-validator';
+import { Birth, Gender, KoreanPhoneNumber, Password } from 'src/common.types';
+import {
+  IsBirthDate,
+  IsGender,
+  IsKoreanPhoneNumber,
+  IsPassword,
+  TransformToBirth,
+  TransformToGender,
+  TransformToKoreanPhoneNumber,
+  TransformToPassowrd,
+} from 'src/custom-validators';
 
 /**
  * Validator for user sign-in
@@ -17,30 +26,35 @@ import { IsBirthDate } from 'src/custom-validators/birth';
 export class UserSignInValidator {
   @IsDefined()
   @IsString()
-  public name: string;
+  public userName: string;
 
   @IsDefined()
   @IsBirthDate()
+  @TransformToBirth()
   public birth: Birth;
 
   @IsDefined()
-  @IsString()
+  @IsGender()
+  @TransformToGender()
   public gender: Gender;
 
   @IsDefined()
-  @IsString()
-  public email: Email;
+  @IsEmail()
+  public email: string;
 
   @IsDefined()
-  @IsString()
-  public phoneNumber: PhoneNumber;
+  @IsKoreanPhoneNumber()
+  @TransformToKoreanPhoneNumber()
+  public phoneNumber: KoreanPhoneNumber;
 
   @IsDefined()
-  @IsString()
+  @IsPassword()
+  @TransformToPassowrd()
   public password: Password;
 
   @IsDefined()
-  @IsString()
+  @IsPassword()
+  @TransformToPassowrd()
   public passwordConfirm: Password;
 
   @IsDefined()
