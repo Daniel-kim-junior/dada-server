@@ -11,7 +11,7 @@ export class ConfigReaderDotEnv implements IConfigReader {
     const foundInEnv = process.env[key];
 
     if (isNullish(foundInEnv)) {
-      throw new InternalServerError(`config: ${key} is mandatory`, 'ENV_REQUIRED');
+      throw new InternalServerError(`config: ${key} is mandatory`);
     }
     return foundInEnv;
   }
