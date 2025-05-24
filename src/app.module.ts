@@ -7,6 +7,7 @@ import { LecturesModule } from './lectures/lectures.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { ResourcesModule } from './resources/resources.module';
 import { OrganiztionsModule } from './organizations/organizations.module';
+import { ConfigModule } from './config/config.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { OrganiztionsModule } from './organizations/organizations.module';
     ProfilesModule,
     OrganiztionsModule,
     ResourcesModule,
+    ConfigModule,
   ],
   providers: [AppService],
 })
