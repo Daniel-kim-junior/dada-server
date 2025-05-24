@@ -7,7 +7,8 @@ import { LecturesModule } from './lectures/lectures.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { ResourcesModule } from './resources/resources.module';
 import { OrganiztionsModule } from './organizations/organizations.module';
-import { ConfigModule } from './config/config.module';
+import { ConfigModule } from '@nestjs/config';
+import drizzleConfig from '../drizzle.config';
 
 @Module({
   imports: [
@@ -18,7 +19,12 @@ import { ConfigModule } from './config/config.module';
     ProfilesModule,
     OrganiztionsModule,
     ResourcesModule,
-    ConfigModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+      cache: true,
+      load: [drizzleConfig],
+    }),
   ],
   providers: [AppService],
 })
