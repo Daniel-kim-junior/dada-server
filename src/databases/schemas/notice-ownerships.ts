@@ -1,4 +1,4 @@
-import { int, mysqlTable, primaryKey, serial, varchar } from 'drizzle-orm/mysql-core';
+import { bigint, mysqlTable, primaryKey, serial, varchar } from 'drizzle-orm/mysql-core';
 import { DateColumns } from './date-columns';
 /**
  * 공지사항 소유권
@@ -9,13 +9,13 @@ import { DateColumns } from './date-columns';
 export const NoticeOwnerships = mysqlTable(
   'notice_ownerships',
   {
-    ownershipId: int('ownership_id').notNull(),
+    id: serial('id').notNull(),
+    noticeId: bigint('notice_id', { mode: 'number' }).notNull(), // ID of the notice
     type: varchar('type', { length: 50 }).notNull(),
     registerProfileId: varchar('register_profile_id', { length: 36 }).notNull(), // UUID of the profile that owns the notice
-    noticeId: serial('notice_id').notNull(), // ID of the notice
     ...DateColumns,
   },
   (table) => ({
-    pk: primaryKey({ columns: [table.ownershipId, table.type] }),
+    pk: primaryKey({ columns: [table.id, table.type] }),
   })
 );

@@ -14,4 +14,5 @@ export const Symbols = {
   NoticesService: Symbol.for('NoticesService'),
   NoticesController: Symbol.for('NoticesController'),
   ConfigReader: Symbol.for('ConfigReader'),
+  Database: Symbol.for('Database'),
 };
