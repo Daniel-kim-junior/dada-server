@@ -1,4 +1,4 @@
-import { bigint, int, mysqlTable, serial, varchar } from 'drizzle-orm/mysql-core';
+import { bigint, mysqlTable, serial, varchar } from 'drizzle-orm/mysql-core';
 import { DateColumns } from './date-columns';
 
 export const Classes = mysqlTable('classes', {
