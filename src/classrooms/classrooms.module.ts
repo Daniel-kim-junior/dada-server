@@ -3,6 +3,7 @@ import { ClassroomsService } from './classrooms.service';
 import { ClassroomsController } from './classrooms.controller';
 import { DatabaseModule } from 'src/databases/databases.module';
 import { Symbols } from 'symbols';
+import { ClassroomRepositoryDrizzle } from './classrooms.repository';
 
 @Module({
   imports: [DatabaseModule],
@@ -13,7 +14,7 @@ import { Symbols } from 'symbols';
     },
     {
       provide: Symbols.ClassroomsRepository,
-      useClass: ClassroomsService, // Assuming ClassroomsService acts as the repository
+      useClass: ClassroomRepositoryDrizzle,
     },
   ],
   controllers: [ClassroomsController],
