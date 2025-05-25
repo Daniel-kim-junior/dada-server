@@ -3,6 +3,11 @@ export type JwtPayload = {
   permissions: string[]; // 권한 목록
 };
 
+export type RequestUser = {
+  userId: string;
+  permissions: string[]; // 권한 목록
+};
+
 import { UserSignInValidator, UserSignUpValidator } from './auth.validator';
 import { AUTH_TYPES } from './constants';
 
