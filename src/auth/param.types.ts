@@ -1,3 +1,3 @@
-import { UserSignInValidator } from './auth.validator';
+import { UserSignUpValidator } from './auth.validator';
 
-export type UserSignInParam = InstanceType<typeof UserSignInValidator>;
+export type UserSignUpParam = InstanceType<typeof UserSignUpValidator>;

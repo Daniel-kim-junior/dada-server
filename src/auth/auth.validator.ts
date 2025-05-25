@@ -23,7 +23,7 @@ import {
  * @marketingAgreement 마케팅 수신 동의 여부
  * @export
  */
-export class UserSignInValidator {
+export class UserSignUpValidator {
   @IsDefined()
   @IsString()
   public userName: string;
