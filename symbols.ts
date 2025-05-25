@@ -19,4 +19,5 @@ export const Symbols = {
   OrganizationsRepository: Symbol.for('OrganizationsRepository'),
   ClassroomsRepository: Symbol.for('ClassroomsRepository'),
   ProfilesRepository: Symbol.for('ProfilesRepository'),
+  ProfilesLoader: Symbol.for('ProfilesLoader'),
 };

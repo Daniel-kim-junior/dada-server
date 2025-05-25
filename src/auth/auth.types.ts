@@ -1,8 +1,4 @@
-import {
-  UserProfileSelectValidator,
-  UserSignInValidator,
-  UserSignUpValidator,
-} from './auth.validator';
+import { UserProfileSelectValidator, UserSignInValidator } from './auth.validator';
 import { AUTH_TYPES } from './auth.constants';
 
 export type JwtPayload = {

@@ -30,4 +30,16 @@ export class ProfilesEntity {
 
     return entity;
   }
+
+  public toResponse(): Partial<Profiles> {
+    return {
+      createdAt: this._createdAt,
+      updatedAt: this._updatedAt,
+      id: this._id,
+      role: this._role,
+      profilePicture: this._profilePicture,
+      nickname: this._nickname,
+      introduction: this._introduction,
+    };
+  }
 }

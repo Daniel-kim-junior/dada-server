@@ -10,11 +10,11 @@ export type IOrganizationsRepository = {
 
 @Injectable()
 export class OrganizationsRepositoryDrizzle implements IOrganizationsRepository {
-  public constructor(@Inject(Symbols.Database) private readonly database: Database) {}
+  public constructor(@Inject(Symbols.Database) private readonly _db: Database) {}
 
   public async createClass(param: CreateClassParam): Promise<void> {
     const { organizationId, name, description } = param;
-    await this.database
+    await this._db
       .insert(Classes)
       .values({
         organizationId,
