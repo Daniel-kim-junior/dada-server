@@ -8,6 +8,7 @@ import { AuthRepositoryDrizzle } from './auth.repository';
 import { DatabaseModule } from 'src/databases/databases.module';
 import { UsersModule } from 'src/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtStrategy } from './jwt/jwt.strategy';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       provide: Symbols.AuthRepository,
       useClass: AuthRepositoryDrizzle,
     },
+    JwtStrategy,
   ],
   exports: [],
 })

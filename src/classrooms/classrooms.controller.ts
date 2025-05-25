@@ -1,10 +1,18 @@
-import { Controller, Delete, Get, Post } from '@nestjs/common';
+import { Controller, Delete, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
+
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RequestUser } from 'src/auth/types';
+import { ReqUser } from 'src/decorator/request-user.decorator';
 
 @Controller('classrooms')
 export class ClassroomsController {
   @Get(':classroomId')
-  public async getClassroomById() {
-    return '강의실 상세 정보가 성공적으로 조회되었습니다.';
+  @UseGuards(JwtAuthGuard)
+  public async getClassroomById(
+    @ReqUser() user: RequestUser,
+    @Param('classroomId', ParseIntPipe) classroomId: number
+  ) {
+    return;
   }
 
   @Post()
