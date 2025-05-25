@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { Symbols } from 'symbols';
 import { AuthRepositoryDrizzle } from './auth.repository';
 import { DatabaseModule } from 'src/databases/databases.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { DatabaseModule } from 'src/databases/databases.module';
       signOptions: { expiresIn: process.env.JWT_EXPIRATION || '24h' },
     }),
     DatabaseModule,
+    UsersModule,
   ],
   controllers: [AuthController],
   providers: [

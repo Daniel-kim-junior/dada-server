@@ -19,3 +19,7 @@ export type Auth = {
   password: string;
   type: string;
 };
+
+export type SignInResponse = {
+  accessToken: string;
+};
