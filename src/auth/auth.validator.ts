@@ -1,4 +1,4 @@
-import { IsBoolean, IsDefined, IsEmail, IsString } from 'class-validator';
+import { IsBoolean, IsDefined, IsEmail, IsIn, IsString } from 'class-validator';
 import { Birth, Gender, KoreanPhoneNumber, Password } from 'src/common.types';
 import {
   IsBirthDate,
@@ -8,8 +8,10 @@ import {
   TransformToBirth,
   TransformToGender,
   TransformToKoreanPhoneNumber,
-  TransformToPassowrd,
+  TransformToPassword,
 } from 'src/custom-validators';
+import { AuthTypes } from './types';
+import { AUTH_TYPES } from './constants';
 
 /**
  * Validator for user sign-in
@@ -49,12 +51,12 @@ export class UserSignUpValidator {
 
   @IsDefined()
   @IsPassword()
-  @TransformToPassowrd()
+  @TransformToPassword()
   public password: Password;
 
   @IsDefined()
   @IsPassword()
-  @TransformToPassowrd()
+  @TransformToPassword()
   public passwordConfirm: Password;
 
   @IsDefined()
@@ -68,4 +70,19 @@ export class UserSignUpValidator {
   @IsDefined()
   @IsBoolean()
   public marketingAgreement: boolean;
+}
+
+export class UserSignInValidator {
+  @IsDefined()
+  @IsKoreanPhoneNumber()
+  public identifier: string; // 전화번호
+
+  @IsDefined()
+  @IsPassword()
+  @TransformToPassword()
+  public password: Password;
+
+  @IsDefined()
+  @IsIn(AUTH_TYPES)
+  public authType: AuthTypes;
 }
