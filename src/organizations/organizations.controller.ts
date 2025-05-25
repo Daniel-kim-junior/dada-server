@@ -1,7 +1,7 @@
 import { Controller, Delete, Get, Post, Put } from '@nestjs/common';
 
-@Controller('organiztions')
-export class OrganiztionsController {
+@Controller('organizations')
+export class OrganizationsController {
   @Post()
   public async createOrganization(): Promise<string> {
     // 조직 생성 로직을 여기에 추가합니다.

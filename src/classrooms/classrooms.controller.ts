@@ -2,10 +2,6 @@ import { Controller, Delete, Get, Post } from '@nestjs/common';
 
 @Controller('classrooms')
 export class ClassroomsController {
-  @Get(':organizationId')
-  public async getClassroomsByOrganization() {
-    return '조직의 강의실 목록이 성공적으로 조회되었습니다.';
-  }
   @Get(':classroomId')
   public async getClassroomById() {
     return '강의실 상세 정보가 성공적으로 조회되었습니다.';
