@@ -1,6 +1,6 @@
 import { IsIn } from 'class-validator';
-import { Auth, AuthTypes } from './types';
-import { AUTH_TYPES } from './constants';
+import { Auth, AuthTypes } from './auth.types';
+import { AUTH_TYPES } from './auth.constants';
 
 export class AuthEntity {
   private _userId: string;

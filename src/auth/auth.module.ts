@@ -9,6 +9,7 @@ import { DatabaseModule } from 'src/databases/databases.module';
 import { UsersModule } from 'src/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt/jwt.strategy';
+import { ProfilesModule } from 'src/users/profiles/profiles.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { JwtStrategy } from './jwt/jwt.strategy';
     }),
     DatabaseModule,
     UsersModule,
+    ProfilesModule,
   ],
   controllers: [AuthController],
   providers: [

@@ -2,19 +2,18 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Symbols } from 'symbols';
 import { JwtService } from '@nestjs/jwt';
 import { IAuthRepository } from './auth.repository';
-import { JwtPayload, SignInResponse, UserSignInParam, UserSignUpParam } from './types';
+import { JwtPayload, SignInResponse, UserProfileSelectParam, UserSignInParam } from './auth.types';
 import { isNullish } from 'remeda';
 import { UnAuthorizedError } from 'src/errors/errors';
 import * as bcrypt from 'bcrypt';
-import { BASIC_PERMISSIONS } from './constants';
-import { UsersService } from 'src/users/users.service';
+import { ProfilesService } from 'src/users/profiles/profiles.service';
 
 @Injectable()
 export class AuthService {
   private readonly saltRounds = 12;
   constructor(
     @Inject(JwtService) private readonly _jwtService: JwtService,
-    @Inject(Symbols.UsersService) private readonly _userService: UsersService,
+    @Inject(Symbols.ProfilesService) private readonly _profilesService: ProfilesService,
     @Inject(Symbols.AuthRepository) private readonly _authRepo: IAuthRepository
   ) {}
 
@@ -32,11 +31,11 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnAuthorizedError('잘못된 비밀번호입니다');
     }
-    this._userService;
+
     // JWT 토큰 생성
     const payload: JwtPayload = {
       sub: user.userId,
-      permissions: BASIC_PERMISSIONS,
+      permissions: [],
     };
 
     return {
@@ -44,7 +43,26 @@ export class AuthService {
     };
   }
 
-  public async signUp(param: UserSignUpParam): Promise<void> {
-    const { email, password } = param;
+  public async selectProfile(param: UserProfileSelectParam): Promise<SignInResponse> {
+    const { userId, profileId } = param;
+
+    /**
+     * 프로필을 profileId로 조회합니다
+     */
+    const profile = await this._profilesService.getProfileById(profileId);
+    if (isNullish(profile)) {
+      throw new UnAuthorizedError('존재하지 않는 프로필입니다');
+    }
+
+    // JWT 토큰 생성
+    const payload: JwtPayload = {
+      sub: userId,
+      permissions: [profile.role],
+      profileId,
+    };
+
+    return {
+      accessToken: this._jwtService.sign(payload),
+    };
   }
 }
