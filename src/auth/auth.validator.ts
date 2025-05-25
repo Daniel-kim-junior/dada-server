@@ -86,3 +86,9 @@ export class UserSignInValidator {
   @IsIn(AUTH_TYPES)
   public authType: AuthTypes;
 }
+
+export class UserInvitationValidator {
+  @IsEmail()
+  @IsDefined()
+  public email: string;
+}

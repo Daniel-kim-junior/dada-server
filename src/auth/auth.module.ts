@@ -7,13 +7,28 @@ import { Symbols } from 'symbols';
 import { AuthRepositoryDrizzle } from './auth.repository';
 import { DatabaseModule } from 'src/databases/databases.module';
 import { UsersModule } from 'src/users/users.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule,
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.JWT_EXPIRATION || '24h' },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        const secret = configService.get<string>('JWT_SECRET');
+        const expiresIn = configService.get<string>('JWT_EXPIRATION') || '24h';
+
+        if (!secret) {
+          throw new Error('JWT_SECRET environment variable is not set');
+        }
+
+        return {
+          secret,
+          signOptions: { expiresIn },
+        };
+      },
+      inject: [ConfigService],
     }),
     DatabaseModule,
     UsersModule,
