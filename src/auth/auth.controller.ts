@@ -1,5 +1,5 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
-import { UserSignInValidator, UserSignUpValidator } from './auth.validator';
+import { UserSignInValidator } from './auth.validator';
 import { AuthService } from './auth.service';
 import { Symbols } from 'symbols';
 import { SignInResponse } from './types';

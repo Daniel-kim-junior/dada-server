@@ -5,9 +5,9 @@ import { RequestUser } from 'src/auth/types';
 import { ReqUser } from 'src/decorator/request-user.decorator';
 
 @Controller('classrooms')
+@UseGuards(JwtAuthGuard)
 export class ClassroomsController {
   @Get(':classroomId')
-  @UseGuards(JwtAuthGuard)
   public async getClassroomById(
     @ReqUser() user: RequestUser,
     @Param('classroomId', ParseIntPipe) classroomId: number
@@ -16,32 +16,49 @@ export class ClassroomsController {
   }
 
   @Post()
-  public async createClassroom() {
+  public async createClassroom(@ReqUser() user: RequestUser) {
     return '강의실이 성공적으로 생성되었습니다.';
   }
 
   @Post(':classroomId/schedule')
-  public async createClassroomSchedule() {
+  public async createClassroomSchedule(
+    @ReqUser() user: RequestUser,
+    @Param('classroomId', ParseIntPipe) classroomId: number
+  ) {
     return '강의실 일정이 성공적으로 생성되었습니다.';
   }
 
   @Delete(':classroomId')
-  public async deleteClassroom() {
+  public async deleteClassroom(
+    @ReqUser() user: RequestUser,
+    @Param('classroomId', ParseIntPipe) classroomId: number
+  ) {
     return '강의실이 성공적으로 삭제되었습니다.';
   }
 
   @Delete(':classroomId/schedule/:scheduleId')
-  public async deleteClassroomSchedule() {
+  public async deleteClassroomSchedule(
+    @ReqUser() user: RequestUser,
+    @Param('scheduleId', ParseIntPipe) scheduleId: number,
+    @Param('classroomId', ParseIntPipe) classroomId: number
+  ) {
     return '강의실 일정이 성공적으로 삭제되었습니다.';
   }
 
   @Get(':classroomId/schedule')
-  public async getClassroomSchedule() {
+  public async getClassroomSchedule(
+    @ReqUser() user: RequestUser,
+    @Param('classroomId', ParseIntPipe) classroomId: number
+  ) {
     return '강의실 일정이 성공적으로 조회되었습니다.';
   }
 
   @Get(':classroomId/schedule/:scheduleId')
-  public async getClassroomScheduleById() {
+  public async getClassroomScheduleById(
+    @ReqUser() user: RequestUser,
+    @Param('scheduleId', ParseIntPipe) scheduleId: number,
+    @Param('classroomId', ParseIntPipe) classroomId: number
+  ) {
     return '강의실 일정 상세 정보가 성공적으로 조회되었습니다.';
   }
 }
