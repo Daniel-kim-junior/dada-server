@@ -19,8 +19,9 @@ export class IsKoreanPhoneNumberConstraint implements ValidatorConstraintInterfa
     validationArguments?: ValidationArguments
   ): Promise<boolean> | boolean {
     if (typeof value !== 'string') return false;
+    const koreanPhoneNumber = KoreanPhoneNumberTransform.create(value);
 
-    return isNonNullish(KoreanPhoneNumberTransform.create(value));
+    return isNonNullish(koreanPhoneNumber);
   }
 
   public defaultMessage?(validationArguments?: ValidationArguments): string {
@@ -61,7 +62,12 @@ export const KoreanPhoneNumberTransform = {
       if (/^01[0-9]\d{8}$/.test(cleaned)) {
         // 010을 10으로 변경하고 +82 추가
         const internationalNumber = '+82' + cleaned.substring(1);
-        return KoreanPhoneNumberTransform.format(internationalNumber) as KoreanPhoneNumber;
+
+        const formattingPhoneNumber = KoreanPhoneNumberTransform.format(
+          internationalNumber
+        ) as KoreanPhoneNumber;
+
+        return formattingPhoneNumber;
       }
       return null;
     }

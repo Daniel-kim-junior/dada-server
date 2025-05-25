@@ -1,4 +1,5 @@
 export const Symbols = {
+  AuthRepository: Symbol.for('AuthRepository'),
   UsersService: Symbol.for('UsersService'),
   UsersController: Symbol.for('UsersController'),
   OrganizationsService: Symbol.for('OrganizationsService'),
