@@ -46,7 +46,7 @@ export const PasswordTransfrom = {
   },
 };
 
-export function TransformToPassowrd() {
+export function TransformToPassword() {
   return Transform(({ value }) => {
     if (typeof value !== 'string') return value;
 

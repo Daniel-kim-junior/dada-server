@@ -8,7 +8,7 @@ import {
   TransformToBirth,
   TransformToGender,
   TransformToKoreanPhoneNumber,
-  TransformToPassowrd,
+  TransformToPassword,
 } from 'src/custom-validators';
 import { AuthTypes } from './types';
 import { AUTH_TYPES } from './constants';
@@ -51,12 +51,12 @@ export class UserSignUpValidator {
 
   @IsDefined()
   @IsPassword()
-  @TransformToPassowrd()
+  @TransformToPassword()
   public password: Password;
 
   @IsDefined()
   @IsPassword()
-  @TransformToPassowrd()
+  @TransformToPassword()
   public passwordConfirm: Password;
 
   @IsDefined()
@@ -79,7 +79,7 @@ export class UserSignInValidator {
 
   @IsDefined()
   @IsPassword()
-  @TransformToPassowrd()
+  @TransformToPassword()
   public password: Password;
 
   @IsDefined()
