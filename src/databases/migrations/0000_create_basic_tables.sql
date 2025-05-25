@@ -45,7 +45,7 @@ CREATE TABLE `classrooms` (
 );
 --> statement-breakpoint
 CREATE TABLE `course_profiles` (
-	`cource_id` serial AUTO_INCREMENT NOT NULL,
+	`course_id` serial AUTO_INCREMENT NOT NULL,
 	`student_profile_id` varchar(36) NOT NULL,
 	`status` varchar(50) NOT NULL,
 	`created_at` timestamp DEFAULT (now()),
