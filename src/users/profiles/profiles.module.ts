@@ -16,8 +16,12 @@ import { ProfilesRepositoryDrizzle } from './profiles.repository';
       provide: Symbols.ProfilesRepository,
       useClass: ProfilesRepositoryDrizzle, // Assuming ProfilesService implements the repository methods
     },
+    {
+      provide: Symbols.ProfilesLoader,
+      useExisting: Symbols.ProfilesService, // Assuming ProfilesService has a loader method
+    },
   ],
   controllers: [ProfilesController],
-  exports: [Symbols.ProfilesService],
+  exports: [Symbols.ProfilesLoader],
 })
 export class ProfilesModule {}

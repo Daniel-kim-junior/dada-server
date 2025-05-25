@@ -6,14 +6,14 @@ import { JwtPayload, SignInResponse, UserProfileSelectParam, UserSignInParam } f
 import { isNullish } from 'remeda';
 import { UnAuthorizedError } from 'src/errors/errors';
 import * as bcrypt from 'bcrypt';
-import { ProfilesService } from 'src/users/profiles/profiles.service';
+import { IProfilesLoader } from 'src/users/profiles/profiles.types';
 
 @Injectable()
 export class AuthService {
   private readonly saltRounds = 12;
   constructor(
     @Inject(JwtService) private readonly _jwtService: JwtService,
-    @Inject(Symbols.ProfilesService) private readonly _profilesService: ProfilesService,
+    @Inject(Symbols.ProfilesLoader) private readonly _profileLoader: IProfilesLoader,
     @Inject(Symbols.AuthRepository) private readonly _authRepo: IAuthRepository
   ) {}
 
@@ -49,7 +49,7 @@ export class AuthService {
     /**
      * 프로필을 profileId로 조회합니다
      */
-    const profile = await this._profilesService.getProfileById(profileId);
+    const profile = await this._profileLoader.getProfileById(profileId);
     if (isNullish(profile)) {
       throw new UnAuthorizedError('존재하지 않는 프로필입니다');
     }
