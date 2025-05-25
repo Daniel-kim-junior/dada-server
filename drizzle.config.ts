@@ -1,17 +1,13 @@
-import { registerAs } from '@nestjs/config';
-
-export default registerAs('database', () => ({
-  schema: './src/database/schemas/*.ts',
-  out: './src/database/migrations',
-  driver: 'mysql2',
+import { defineConfig } from 'drizzle-kit';
+export default defineConfig({
+  dialect: 'mysql',
+  schema: './src/databases/schemas/*.ts',
+  out: './src/databases/migrations',
   dbCredentials: {
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT || '3306'),
-    user: process.env.DB_USER || 'root',
+    user: process.env.HOST || 'root',
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME || 'nestjs_app',
-    ssl: process.env.DB_SSL === 'true',
   },
-  verbose: true,
-  strict: true,
-}));
+});

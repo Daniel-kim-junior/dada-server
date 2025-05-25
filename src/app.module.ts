@@ -8,10 +8,19 @@ import { ProfilesModule } from './profiles/profiles.module';
 import { ResourcesModule } from './resources/resources.module';
 import { OrganiztionsModule } from './organizations/organizations.module';
 import { ConfigModule } from '@nestjs/config';
-import drizzleConfig from '../drizzle.config';
+import { DatabaseModule } from './databases/databases.module';
+import { AppController } from './app.controller';
+import { mysqlConfig } from 'mysql.config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+      cache: true,
+      load: [mysqlConfig],
+    }),
+    DatabaseModule,
     AuthModule,
     ClassroomsModule,
     UsersModule,
@@ -19,13 +28,8 @@ import drizzleConfig from '../drizzle.config';
     ProfilesModule,
     OrganiztionsModule,
     ResourcesModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: '.env',
-      cache: true,
-      load: [drizzleConfig],
-    }),
   ],
   providers: [AppService],
+  controllers: [AppController],
 })
 export class AppModule {}
