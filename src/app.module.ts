@@ -10,7 +10,6 @@ import { DatabaseModule } from './databases/databases.module';
 import { AppController } from './app.controller';
 import { mysqlConfig } from '../mysql.config';
 import { UsersModule } from './users/users.module';
-import { UsersController } from './users/users.controller';
 
 @Module({
   imports: [

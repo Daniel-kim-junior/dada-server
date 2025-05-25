@@ -21,11 +21,12 @@ export class AuthService {
   public async signIn(param: UserSignInParam): Promise<SignInResponse> {
     const { identifier, password, authType } = param;
     // 사용자 인증 로직을 여기에 추가합니다.
+
     // 예: 사용자 정보 조회, 비밀번호 확인 등
     const user = await this._authRepo.getAuthByIdentifierAndType(identifier, authType);
 
     if (isNullish(user)) {
-      throw new UnAuthorizedError('잘못된 이메일입니다');
+      throw new UnAuthorizedError('잘못된 identifier입니다');
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
