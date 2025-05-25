@@ -1,8 +1,10 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
-import { UserSignInValidator } from './auth.validator';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { UserProfileSelectValidator, UserSignInValidator } from './auth.validator';
 import { AuthService } from './auth.service';
 import { Symbols } from 'symbols';
-import { SignInResponse } from './types';
+import { RequestUser, SignInResponse } from './auth.types';
+import { ReqUser } from 'src/decorator/request-user.decorator';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -11,6 +13,16 @@ export class AuthController {
   @Post('/sign-in')
   public async signIn(@Body() param: UserSignInValidator): Promise<SignInResponse> {
     const res = await this._authService.signIn(param);
+    return res;
+  }
+
+  @Post('/select-profile')
+  @UseGuards(JwtAuthGuard)
+  public async selectProfile(
+    @ReqUser() user: RequestUser,
+    @Body() param: UserProfileSelectValidator
+  ): Promise<SignInResponse> {
+    const res = await this._authService.selectProfile({ ...param, ...user });
     return res;
   }
 }

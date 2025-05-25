@@ -1,11 +1,30 @@
-import { Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RequestUser } from 'src/auth/types';
+import { RequestUser } from 'src/auth/auth.types';
 import { ReqUser } from 'src/decorator/request-user.decorator';
+import { OrganiztionsService } from './organizations.service';
+import { CreateClassValidator } from './organizations.validator';
+import { Symbols } from 'symbols';
 
 @Controller('organizations')
 @UseGuards(JwtAuthGuard)
 export class OrganizationsController {
+  public constructor(
+    @Inject(Symbols.OrganizationsService)
+    private readonly _organizationsService: OrganiztionsService
+  ) {}
+
   @Post()
   public async createOrganization(@ReqUser() user: RequestUser): Promise<string> {
     // 조직 생성 로직을 여기에 추가합니다.
@@ -43,6 +62,19 @@ export class OrganizationsController {
   ): Promise<string> {
     // 조직에 속한 수업 목록 조회 로직을 여기에 추가합니다.
     return '조직의 수업 목록이 성공적으로 조회되었습니다.';
+  }
+
+  @Post(':id/classes')
+  public async addClassToOrganization(
+    @ReqUser() user: RequestUser,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() param: CreateClassValidator
+  ): Promise<void> {
+    await this._organizationsService.addClassToOrganization({
+      ...user,
+      ...param,
+      organizationId: id,
+    });
   }
 
   @Get(':id/roster')

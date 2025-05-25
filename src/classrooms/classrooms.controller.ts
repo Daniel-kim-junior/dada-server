@@ -1,7 +1,16 @@
-import { Controller, Delete, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RequestUser } from 'src/auth/types';
+import { RequestUser } from 'src/auth/auth.types';
 import { ReqUser } from 'src/decorator/request-user.decorator';
 
 @Controller('classrooms')
@@ -13,11 +22,6 @@ export class ClassroomsController {
     @Param('classroomId', ParseIntPipe) classroomId: number
   ) {
     return;
-  }
-
-  @Post()
-  public async createClassroom(@ReqUser() user: RequestUser) {
-    return '강의실이 성공적으로 생성되었습니다.';
   }
 
   @Post(':classroomId/schedule')

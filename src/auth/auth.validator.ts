@@ -1,4 +1,4 @@
-import { IsBoolean, IsDefined, IsEmail, IsIn, IsString } from 'class-validator';
+import { IsBoolean, IsDefined, IsEmail, IsIn, IsString, IsUUID } from 'class-validator';
 import { Birth, Gender, KoreanPhoneNumber, Password } from 'src/common.types';
 import {
   IsBirthDate,
@@ -10,8 +10,8 @@ import {
   TransformToKoreanPhoneNumber,
   TransformToPassword,
 } from 'src/custom-validators';
-import { AuthTypes } from './types';
-import { AUTH_TYPES } from './constants';
+import { AuthTypes } from './auth.types';
+import { AUTH_TYPES } from './auth.constants';
 
 /**
  * Validator for user sign-in
@@ -85,4 +85,10 @@ export class UserSignInValidator {
   @IsDefined()
   @IsIn(AUTH_TYPES)
   public authType: AuthTypes;
+}
+
+export class UserProfileSelectValidator {
+  @IsDefined()
+  @IsUUID()
+  public profileId: string; // 프로필 ID
 }
