@@ -10,7 +10,7 @@ import { OrganiztionsModule } from './organizations/organizations.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './databases/databases.module';
 import { AppController } from './app.controller';
-import { mysqlConfig } from './mysql.config';
+import { mysqlConfig } from '../mysql.config';
 
 @Module({
   imports: [
