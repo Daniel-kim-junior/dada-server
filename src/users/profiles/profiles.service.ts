@@ -44,9 +44,7 @@ export class ProfilesService implements IProfilesLoader {
     /**
      * 자신이 연결을 요청하거나 받았을 수 있음
      */
-    return {
-      ...profileConnections.toConnectionResponse(profileId),
-    };
+    return profileConnections.toConnectionResponse(profileId);
   }
 
   public async getProfiles(user: RequestUser) {
