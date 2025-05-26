@@ -1,16 +1,19 @@
 import { UserProfileSelectValidator, UserSignInValidator } from './auth.validator';
 import { AUTH_TYPES } from './auth.constants';
+import { ProfileRole } from 'src/users/profiles/profiles.types';
 
 export type JwtPayload = {
   sub: string; // Subject (user ID)
   permissions: string[]; // 권한 목록
   profileId?: string; // 프로필 ID (선택적)
+  profileRole?: ProfileRole; // 프로필 역할 (선택적)
 };
 
 export type RequestUser = {
   userId: string;
-  permissions: string[]; // 권한 목록
+  permissions: string[];
   profileId?: string;
+  profileRole?: ProfileRole;
 };
 
 export type UserSignInParam = InstanceType<typeof UserSignInValidator>;
@@ -33,4 +36,5 @@ export type SignInResponse = {
 
 export type UserProfileSelectResponse = SignInResponse & {
   profileId: string;
+  profileRole: ProfileRole;
 };

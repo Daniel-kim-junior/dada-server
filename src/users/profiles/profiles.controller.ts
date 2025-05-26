@@ -56,18 +56,8 @@ export class ProfilesController {
     return '프로필 연결 요청이 성공적으로 전송되었습니다.';
   }
 
-  @Get('/connection/confirm')
-  public async confirmProfileConnection(@ReqUser() user: RequestUser): Promise<string> {
-    // 프로필 연결 확인 로직을 여기에 추가합니다.
-    /**
-     * response : {
-     * connectedProfiles: [{
-	      connectProfileId: string
-	      role: '학부모' | '학생'
-	      status: 'pending' | 'rejected' | 'completed'
-      }]
-    *}
-     */
-    return '프로필 연결이 성공적으로 확인되었습니다.';
+  @Get('/connections')
+  public async getProfileConnections(@ReqUser() user: RequestUser) {
+    return await this._profieService.getProfileConnections(user);
   }
 }

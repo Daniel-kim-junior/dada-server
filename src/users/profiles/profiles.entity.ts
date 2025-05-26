@@ -2,15 +2,15 @@ import { IsIn } from 'class-validator';
 import { PROFILE_ROLES, ProfileRole, Profiles } from './profiles.types';
 
 export class ProfilesEntity {
-  public _createdAt: Date;
-  public _deletedAt: Date;
-  public _updatedAt: Date;
-  public _id: string;
-  public _userId: string;
-  public _profilePicture: string;
-  public _nickname: string;
-  public _introduction: string;
-  public _role: ProfileRole;
+  private _createdAt: Date;
+  private _deletedAt: Date;
+  private _updatedAt: Date;
+  private _id: string;
+  private _userId: string;
+  private _profilePicture: string;
+  private _nickname: string;
+  private _introduction: string;
+  private _role: ProfileRole;
 
   @IsIn(PROFILE_ROLES)
   public role: ProfileRole;
@@ -41,5 +41,9 @@ export class ProfilesEntity {
       nickname: this._nickname,
       introduction: this._introduction,
     };
+  }
+
+  public get id(): string {
+    return this._id;
   }
 }

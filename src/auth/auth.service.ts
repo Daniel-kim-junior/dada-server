@@ -2,7 +2,13 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Symbols } from 'symbols';
 import { JwtService } from '@nestjs/jwt';
 import { IAuthRepository } from './auth.repository';
-import { JwtPayload, SignInResponse, UserProfileSelectParam, UserSignInParam } from './auth.types';
+import {
+  JwtPayload,
+  SignInResponse,
+  UserProfileSelectParam,
+  UserProfileSelectResponse,
+  UserSignInParam,
+} from './auth.types';
 import { isNullish } from 'remeda';
 import { UnAuthorizedError } from 'src/errors/errors';
 import * as bcrypt from 'bcrypt';
@@ -43,7 +49,7 @@ export class AuthService {
     };
   }
 
-  public async selectProfile(param: UserProfileSelectParam): Promise<SignInResponse> {
+  public async selectProfile(param: UserProfileSelectParam): Promise<UserProfileSelectResponse> {
     const { userId, profileId } = param;
 
     /**
@@ -57,12 +63,15 @@ export class AuthService {
     // JWT 토큰 생성
     const payload: JwtPayload = {
       sub: userId,
-      permissions: [profile.role],
+      permissions: [],
       profileId,
+      profileRole: profile.role,
     };
 
     return {
       accessToken: this._jwtService.sign(payload),
+      profileRole: profile.role,
+      profileId: profile.id,
     };
   }
 }

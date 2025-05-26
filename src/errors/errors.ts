@@ -13,6 +13,12 @@ export class UnAuthorizedError extends BaseCustomError {
   }
 }
 
+export class RoleError extends BaseCustomError {
+  constructor(message: string = 'Role Error', context?: any) {
+    super(message, HttpStatus.FORBIDDEN, 'ROLE_ERROR', context);
+  }
+}
+
 export class NotFoundError extends BaseCustomError {
   constructor(message: string = 'Resource Not Found', context?: any) {
     super(message, HttpStatus.NOT_FOUND, 'NOT_FOUND', context);
