@@ -22,6 +22,27 @@
       "when": 1748232614615,
       "tag": "0002_organizations_add_columns",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1748235535106,
+      "tag": "0003_add_organization_invite_profile_id",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1748236298598,
+      "tag": "0006_add_primary_key_in_org_roster",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1748236611556,
+      "tag": "0005_add_index_in_org_ownership_and_roster",
+      "breakpoints": true
     }
   ]
 }

@@ -29,3 +29,9 @@ export class CreateOrganizationValidator {
   @Length(1, 255)
   public logo?: string;
 }
+
+export class AddProfileToRosterValidator {
+  @IsString()
+  @IsNotEmpty()
+  public addProfileId: string;
+}
