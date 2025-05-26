@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "1cff86c7-3dd6-46db-a496-b4e305af54e3",
-  "prevId": "41afb06d-4e61-468b-ba5c-223435b56b3f",
+  "id": "72b4383d-57ee-4c0b-be39-d0227bf053b1",
+  "prevId": "d27833eb-39f8-45f2-8a90-039b7fd9c98d",
   "tables": {
     "auth": {
       "name": "auth",
@@ -304,12 +304,19 @@
     "course_profiles": {
       "name": "course_profiles",
       "columns": {
-        "course_id": {
-          "name": "course_id",
+        "id": {
+          "name": "id",
           "type": "serial",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": true
+        },
+        "course_id": {
+          "name": "course_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
         },
         "student_profile_id": {
           "name": "student_profile_id",
@@ -350,9 +357,32 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "course_id_idx": {
+          "name": "course_id_idx",
+          "columns": [
+            "course_id"
+          ],
+          "isUnique": false
+        },
+        "student_profile_id_and_status_idx": {
+          "name": "student_profile_id_and_status_idx",
+          "columns": [
+            "student_profile_id",
+            "status"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "course_profiles_id": {
+          "name": "course_profiles_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
@@ -412,7 +442,15 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "session_id_idx": {
+          "name": "session_id_idx",
+          "columns": [
+            "session_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "courses_id": {
@@ -603,10 +641,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "notice_id": {
           "name": "notice_id",
@@ -689,7 +727,7 @@
           "name": "content",
           "type": "varchar(5000)",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "created_at": {
@@ -786,7 +824,16 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "profile_org_unique": {
+          "name": "profile_org_unique",
+          "columns": [
+            "profile_id",
+            "organization_id"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "organization_ownerships_id": {
@@ -831,7 +878,16 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "profile_org_roster_unique": {
+          "name": "profile_org_roster_unique",
+          "columns": [
+            "profile_id",
+            "organization_id"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "organizations_roster_id": {
@@ -1067,7 +1123,15 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "class_id_idx": {
+          "name": "class_id_idx",
+          "columns": [
+            "class_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "sessions_id": {

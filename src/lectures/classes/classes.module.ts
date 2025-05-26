@@ -17,7 +17,11 @@ import { ClassesRepositoryDrizzle } from './classes.repository';
       provide: Symbols.ClassesRepository,
       useClass: ClassesRepositoryDrizzle,
     },
+    {
+      provide: Symbols.ClassesLoader,
+      useExisting: Symbols.ClassesService,
+    },
   ],
-  exports: [],
+  exports: [Symbols.ClassesLoader],
 })
 export class ClassesModule {}

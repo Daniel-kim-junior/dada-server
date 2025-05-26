@@ -1,26 +1,45 @@
 export const Symbols = {
-  AuthRepository: Symbol.for('AuthRepository'),
-  UsersService: Symbol.for('UsersService'),
-  UsersController: Symbol.for('UsersController'),
-  OrganizationsService: Symbol.for('OrganizationsService'),
-  OrganizationsController: Symbol.for('OrganizationsController'),
-  AuthService: Symbol.for('AuthService'),
-  AuthController: Symbol.for('AuthController'),
-  ClassroomsService: Symbol.for('ClassroomsService'),
-  ClassroomsController: Symbol.for('ClassroomsController'),
-  LecturesController: Symbol.for('LecturesController'),
-  LecturesService: Symbol.for('LecturesService'),
-  ProfilesService: Symbol.for('ProfilesService'),
-  ProfilesController: Symbol.for('ProfilesController'),
-  NoticesService: Symbol.for('NoticesService'),
-  NoticesController: Symbol.for('NoticesController'),
+  /**
+   * Common
+   */
   ConfigReader: Symbol.for('ConfigReader'),
   Database: Symbol.for('Database'),
+
+  /**
+   * Services
+   */
+  UsersService: Symbol.for('UsersService'),
+  OrganizationsService: Symbol.for('OrganizationsService'),
+  AuthService: Symbol.for('AuthService'),
+  ClassroomsService: Symbol.for('ClassroomsService'),
+  LecturesService: Symbol.for('LecturesService'),
+  ProfilesService: Symbol.for('ProfilesService'),
+  NoticesService: Symbol.for('NoticesService'),
+  ClassesService: Symbol.for('ClassesService'),
+  SessionsService: Symbol.for('SessionsService'),
+  CoursesService: Symbol.for('CoursesService'),
+
+  /**
+   * Repositories
+   */
   OrganizationsRepository: Symbol.for('OrganizationsRepository'),
   ClassroomsRepository: Symbol.for('ClassroomsRepository'),
   ProfilesRepository: Symbol.for('ProfilesRepository'),
-  ProfilesLoader: Symbol.for('ProfilesLoader'),
-  ClassesService: Symbol.for('ClassesService'),
   ClassesRepository: Symbol.for('ClassesRepository'),
+  NoticeRepository: Symbol.for('NoticeRepository'),
+  AuthRepository: Symbol.for('AuthRepository'),
+  SessionsRepository: Symbol.for('SessionsRepository'),
+  CoursesRepository: Symbol.for('CoursesRepository'),
+
+  /**
+   * Loaders
+   */
+  ProfilesLoader: Symbol.for('ProfilesLoader'),
   OrganizationOwnershipLoader: Symbol.for('OrganizationOwnershipLoader'),
+  OrganizationsLoader: Symbol.for('OrganizationsLoader'),
+  ClassesLoader: Symbol.for('ClassesLoader'),
+  SessionsLoader: Symbol.for('SessionsLoader'),
+  CoursesLoader: Symbol.for('CoursesLoader'),
+  CourseProfilesLoader: Symbol.for('CourseProfilesLoader'),
+  OrganizationRostersLoader: Symbol.for('OrganizationRostersLoader'),
 };

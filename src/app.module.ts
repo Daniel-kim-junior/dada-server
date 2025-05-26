@@ -6,10 +6,10 @@ import { LecturesModule } from './lectures/lectures.module';
 import { ResourcesModule } from './resources/resources.module';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseModule } from './databases/databases.module';
 import { AppController } from './app.controller';
 import { mysqlConfig } from '../mysql.config';
 import { UsersModule } from './users/users.module';
+import { DatabaseModule } from './databases/databases.module';
 
 @Module({
   imports: [
@@ -19,13 +19,13 @@ import { UsersModule } from './users/users.module';
       cache: true,
       load: [mysqlConfig],
     }),
-    DatabaseModule,
     AuthModule,
     ClassroomsModule,
     UsersModule,
     LecturesModule,
     OrganizationsModule,
     ResourcesModule,
+    DatabaseModule,
   ],
   providers: [AppService],
   controllers: [AppController],

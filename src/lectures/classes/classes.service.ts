@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateClassParam } from './classes.types';
+import { Class, CreateClassParam, IClassesLoader } from './classes.types';
 import { Symbols } from 'symbols';
 import { isNullish } from 'remeda';
 import { UnAuthorizedError } from 'src/errors/errors';
@@ -7,13 +7,17 @@ import { IOrganizationOwnershipLoader } from 'src/organizations/organizations.ty
 import { IClassesRepository } from './classes.repository';
 
 @Injectable()
-export class ClassesService {
+export class ClassesService implements IClassesLoader {
   public constructor(
     @Inject(Symbols.OrganizationOwnershipLoader)
     private readonly _organizationOwnershipLoader: IOrganizationOwnershipLoader,
     @Inject(Symbols.ClassesRepository)
     private readonly _classesRepo: IClassesRepository
   ) {}
+
+  public async getClassById(id: number): Promise<Class> {
+    return await this._classesRepo.getClassById(id);
+  }
 
   public async addClassToOrganization(param: CreateClassParam) {
     const { profileId: requestProfileId, organizationId } = param;

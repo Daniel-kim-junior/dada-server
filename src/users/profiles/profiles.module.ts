@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { ProfilesController } from './profiles.controller';
-import { DatabaseModule } from 'src/databases/databases.module';
 import { Symbols } from 'symbols';
 import { ProfilesRepositoryDrizzle } from './profiles.repository';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [],
   providers: [
     {
       provide: Symbols.ProfilesService,

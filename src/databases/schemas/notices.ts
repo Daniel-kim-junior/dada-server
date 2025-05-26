@@ -6,6 +6,6 @@ import { DateColumns } from './date-columns';
 export const Notices = mysqlTable('notices', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(), // 공지 제목
-  content: varchar('content', { length: 5000 }).notNull(), // 공지 내용
+  content: varchar('content', { length: 5000 }), // 공지 내용
   ...DateColumns,
 });

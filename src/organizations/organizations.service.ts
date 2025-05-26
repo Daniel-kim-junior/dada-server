@@ -4,7 +4,11 @@ import {
   AddProfileToRosterParam,
   CreateOrganizationParam,
   IOrganizationOwnershipLoader,
+  IOrganizationRostersLoader,
+  IOrganizationsLoader,
+  Organization,
   OrganizationOwnership,
+  OrganizationRoster,
 } from './organizations.types';
 import { IOrganizationsRepository } from './organizations.repository';
 import { Symbols } from 'symbols';
@@ -20,12 +24,30 @@ import { Nullable } from 'src/common.types';
 import { ORGANIZATION_OWNERSHIP_ROLES } from './constants';
 
 @Injectable()
-export class OrganiztionsService implements IOrganizationOwnershipLoader {
+export class OrganiztionsService
+  implements IOrganizationOwnershipLoader, IOrganizationsLoader, IOrganizationRostersLoader
+{
   public constructor(
     @Inject(Symbols.OrganizationsRepository)
     private readonly _organizationRepo: IOrganizationsRepository,
     @Inject(Symbols.ProfilesLoader) private readonly _profileLoader: IProfilesLoader
   ) {}
+  public getOrganizationRosterByProfileIdAndOrganizationId({
+    profileId,
+    organizationId,
+  }: {
+    profileId: string;
+    organizationId: number;
+  }): Promise<Nullable<OrganizationRoster>> {
+    return this._organizationRepo.findRosterByProfileIdAndOrganizationId({
+      profileId,
+      organizationId,
+    });
+  }
+
+  public async getOrganizationById(id: number): Promise<Nullable<Organization>> {
+    return await this._organizationRepo.findOrganizationById(id);
+  }
 
   public async findOwnershipByProfileIdAndOrganizationId({
     profileId: requestProfileId,
@@ -130,7 +152,7 @@ export class OrganiztionsService implements IOrganizationOwnershipLoader {
     if (isNullish(profileId)) {
       throw new UnAuthorizedError('프로필이 선택되지 않았습니다. 프로필을 선택해주세요.');
     }
-    const foundOrganization = await this._organizationRepo.findOrganizationById(organizationId);
+    const foundOrganization = await this.getOrganizationById(organizationId);
     if (isNullish(foundOrganization)) {
       throw new UnAuthorizedError('존재하지 않는 조직입니다.');
     }
@@ -154,7 +176,7 @@ export class OrganiztionsService implements IOrganizationOwnershipLoader {
       );
     }
 
-    const foundOrganization = await this._organizationRepo.findOrganizationById(organizationId);
+    const foundOrganization = await this.getOrganizationById(organizationId);
     if (isNullish(foundOrganization)) {
       throw new UnAuthorizedError('존재하지 않는 조직입니다.');
     }

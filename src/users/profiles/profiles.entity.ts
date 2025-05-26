@@ -44,6 +44,10 @@ export class ProfilesEntity {
     return this._role === PROFILE_ROLES.ADMIN || this._role === PROFILE_ROLES.INSTRUCTOR;
   }
 
+  public isNoticeAuth(): boolean {
+    return this._role === PROFILE_ROLES.ADMIN || this._role === PROFILE_ROLES.INSTRUCTOR;
+  }
+
   public isStudent(): boolean {
     return this._role === PROFILE_ROLES.STUDENT;
   }

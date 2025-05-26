@@ -1,2 +1,2 @@
-ALTER TABLE `organization_ownerships` ADD CONSTRAINT `profile_org_unique` UNIQUE(`profile_id`,`organization_id`);--> statement-breakpoint
+ALTER TABLE `organization_ownerships` ADD CONSTRAINT `profile_org_unique` UNIQUE(`profile_id`,`organization_id`);
 ALTER TABLE `organizations_roster` ADD CONSTRAINT `profile_org_roster_unique` UNIQUE(`profile_id`,`organization_id`);
