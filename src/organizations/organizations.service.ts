@@ -80,13 +80,26 @@ export class OrganiztionsService implements IOrganizationOwnershipLoader {
     await this._organizationRepo.createOrganizationAndOwnership(param);
   }
 
+  public async getOrganizationRoster(parma: { profileId?: string; organizationId: number }) {
+    const { profileId, organizationId } = parma;
+    if (isNullish(profileId)) {
+      throw new UnAuthorizedError('프로필이 선택되지 않았습니다. 프로필을 선택해주세요.');
+    }
+    const foundOrganization = await this._organizationRepo.findOrganizationById(organizationId);
+    if (isNullish(foundOrganization)) {
+      throw new UnAuthorizedError('존재하지 않는 조직입니다.');
+    }
+
+    return await this._organizationRepo.findRostersByOrgnizationId(organizationId);
+  }
+
   public async addProfileToOrganizationRoster(param: AddProfileToRosterParam) {
     const { organizationId, addProfileId, profileId: requestProfileId } = param;
     if (isNullish(requestProfileId)) {
       throw new UnAuthorizedError('프로필이 선택되지 않았습니다. 프로필을 선택해주세요.');
     }
 
-    const ownership = this.findOwnershipByProfileIdAndOrganizationId({
+    const ownership = await this.findOwnershipByProfileIdAndOrganizationId({
       profileId: requestProfileId,
       organizationId,
     });

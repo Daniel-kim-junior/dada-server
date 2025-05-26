@@ -51,22 +51,15 @@ export class OrganizationsController {
     return await this._organizationsService.getAllOrganizations(user);
   }
 
-  @Get(':id')
-  public async getOrganizationById(
-    @ReqUser() user: RequestUser,
-    @Param('id', ParseIntPipe) id: number
-  ): Promise<string> {
-    // 조직 ID로 조회하는 로직을 여기에 추가합니다.
-    return '조직이 성공적으로 조회되었습니다.';
-  }
-
   @Get(':id/rosters')
   public async getOrganizationRoster(
     @ReqUser() user: RequestUser,
     @Param('id', ParseIntPipe) id: number
-  ): Promise<string> {
-    // 조직에 속한 프로필 로스터 조회 로직을 여기에 추가합니다.
-    return '조직의 프로필 로스터가 성공적으로 조회되었습니다.';
+  ) {
+    return await this._organizationsService.getOrganizationRoster({
+      ...user,
+      organizationId: id,
+    });
   }
 
   @Post(':id/roster')

@@ -5,6 +5,8 @@ import {
   Organization,
   OrganizationOwnership,
   OrganizationRoster,
+  OrganizationRosterProfile,
+  OrganizationRosterWithOrganization,
 } from './organizations.types';
 import { Inject, Injectable } from '@nestjs/common';
 import { Symbols } from 'symbols';
@@ -13,6 +15,7 @@ import {
   OrganizationOwnerships,
   OrganizationRosters,
   Organizations,
+  Profiles,
 } from 'src/databases/schemas';
 import { ORGANIZATION_OWNERSHIP_ROLES } from './constants';
 import { Nullable } from 'src/common.types';
@@ -22,6 +25,7 @@ export type IOrganizationsRepository = {
   createOrganizationAndOwnership(param: CreateOrganizationParam): Promise<void>;
   addProfileToRoster(param: AddProfileToRosterParam): Promise<void>;
   findAllOrganizations(): Promise<Organization[]>;
+  findRostersByOrgnizationId(organizationId: number): Promise<OrganizationRosterProfile[]>;
   findOwnershipByProfileIdAndOrganizationId({
     profileId,
     organizationId,
@@ -37,20 +41,43 @@ export type IOrganizationsRepository = {
     profileId: string;
     organizationId: number;
   }): Promise<Nullable<OrganizationRoster>>;
-  findRostersByProfileId(profileId: string): Promise<OrganizationRoster[]>;
+  findRostersByProfileId(profileId: string): Promise<OrganizationRosterWithOrganization[]>;
 };
 
 @Injectable()
 export class OrganizationsRepositoryDrizzle implements IOrganizationsRepository {
   public constructor(@Inject(Symbols.Database) private readonly _db: Database) {}
+
+  public async findRostersByOrgnizationId(
+    organizationId: number
+  ): Promise<OrganizationRosterProfile[]> {
+    return await this._db
+      .select({
+        nickname: Profiles.nickname,
+        role: Profiles.role,
+        profilePicture: Profiles.profilePicture,
+        introduction: Profiles.introduction,
+      })
+      .from(OrganizationRosters)
+      .innerJoin(Profiles, eq(Profiles.id, OrganizationRosters.profileId))
+      .where(eq(OrganizationRosters.organizationId, organizationId));
+  }
   public async findAllOrganizations(): Promise<Organization[]> {
     return await this._db.select().from(Organizations);
   }
 
-  public async findRostersByProfileId(profileId: string): Promise<OrganizationRoster[]> {
+  public async findRostersByProfileId(
+    profileId: string
+  ): Promise<OrganizationRosterWithOrganization[]> {
     return this._db
-      .select()
+      .select({
+        organizationName: Organizations.name,
+        organizationId: Organizations.id,
+        organizationLogo: Organizations.logo,
+        organizationDescription: Organizations.description,
+      })
       .from(OrganizationRosters)
+      .innerJoin(Organizations, eq(Organizations.id, OrganizationRosters.organizationId))
       .where(eq(OrganizationRosters.profileId, profileId));
   }
 
