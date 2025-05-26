@@ -14,7 +14,11 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestUser } from 'src/auth/auth.types';
 import { ReqUser } from 'src/decorator/request-user.decorator';
 import { OrganiztionsService } from './organizations.service';
-import { CreateClassValidator, CreateOrganizationValidator } from './organizations.validator';
+import {
+  AddProfileToRosterValidator,
+  CreateClassValidator,
+  CreateOrganizationValidator,
+} from './organizations.validator';
 import { Symbols } from 'symbols';
 
 @Controller('organizations')
@@ -91,10 +95,14 @@ export class OrganizationsController {
   @Post(':id/roster')
   public async addProfileToOrganizationRoster(
     @ReqUser() user: RequestUser,
-    @Param('id', ParseIntPipe) id: number
-  ): Promise<string> {
-    // 조직에 프로필을 추가하는 로직을 여기에 추가합니다.
-    return '프로필이 조직의 로스터에 성공적으로 추가되었습니다.';
+    @Param('id', ParseIntPipe) id: number,
+    @Body() param: AddProfileToRosterValidator
+  ): Promise<void> {
+    await this._organizationsService.addProfileToOrganizationRoster({
+      ...user,
+      ...param,
+      organizationId: id,
+    });
   }
 
   @Delete(':id/roster/:profileId')

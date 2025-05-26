@@ -1,19 +1,29 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateClassParam, CreateOrganizationParam } from './organizations.types';
+import {
+  AddProfileToRosterParam,
+  CreateClassParam,
+  CreateOrganizationParam,
+} from './organizations.types';
 import { IOrganizationsRepository } from './organizations.repository';
 import { Symbols } from 'symbols';
 import { isIncludedIn, isNullish } from 'remeda';
-import { CREATE_ORGANIZATION_PROFILE_ROLES } from 'src/users/profiles/profiles.constant';
+import {
+  CREATE_ORGANIZATION_PROFILE_ROLES,
+  PROFILE_CONFIRM_ROLES,
+} from 'src/users/profiles/profiles.constant';
 import { UnAuthorizedError } from 'src/errors/errors';
+import { IProfilesLoader } from 'src/users/profiles/profiles.types';
 
 @Injectable()
 export class OrganiztionsService {
   public constructor(
-    @Inject(Symbols.OrganizationsRepository) private readonly _repository: IOrganizationsRepository
+    @Inject(Symbols.OrganizationsRepository)
+    private readonly _organizationRepo: IOrganizationsRepository,
+    @Inject(Symbols.ProfilesLoader) private readonly _profileLoader: IProfilesLoader
   ) {}
 
   public async addClassToOrganization(param: CreateClassParam) {
-    await this._repository.createClass(param);
+    await this._organizationRepo.createClass(param);
   }
 
   public async createOrganization(param: CreateOrganizationParam) {
@@ -27,6 +37,54 @@ export class OrganiztionsService {
       );
     }
 
-    await this._repository.createOrganizationAndOwnership(param);
+    await this._organizationRepo.createOrganizationAndOwnership(param);
+  }
+
+  public async addProfileToOrganizationRoster(param: AddProfileToRosterParam) {
+    const { organizationId, addProfileId, profileId: requestProfileId } = param;
+    if (isNullish(requestProfileId)) {
+      throw new UnAuthorizedError('프로필이 선택되지 않았습니다. 프로필을 선택해주세요.');
+    }
+
+    const ownership = await this._organizationRepo.findOwnershipByProfileIdAndOrganizationId({
+      profileId: requestProfileId,
+      organizationId,
+    });
+    if (isNullish(ownership)) {
+      throw new UnAuthorizedError(
+        '조직 관리자/부관리자가 아닙니다. 조직 관리자/부관리자 프로필로 로그인해주세요.'
+      );
+    }
+
+    const foundOrganization = await this._organizationRepo.findOrganizationById(organizationId);
+    if (isNullish(foundOrganization)) {
+      throw new UnAuthorizedError('존재하지 않는 조직입니다.');
+    }
+
+    const foundProfile = await this._profileLoader.getProfileById(addProfileId);
+    if (isNullish(foundProfile)) {
+      throw new UnAuthorizedError('존재하지 않는 프로필입니다.');
+    }
+    /**
+     * 프로필 역할이 조직 로스터에 추가할 수 있는 역할인지 확인합니다.
+     */
+    if (isIncludedIn(foundProfile.role, CREATE_ORGANIZATION_PROFILE_ROLES)) {
+      throw new UnAuthorizedError(
+        `프로필 역할을 조직 로스터에 추가할 수 없습니다. 현재 프로필 역할: ${foundProfile.role}, 대상 프로필 역할: ${PROFILE_CONFIRM_ROLES.join(', ')}`
+      );
+    }
+    /**
+     * 프로필이 이미 조직 로스터에 있는지 확인합니다.
+     */
+    const profileRoster = await this._organizationRepo.findRoasterByProfileIdAndOrganizationId({
+      profileId: addProfileId,
+      organizationId,
+    });
+
+    if (!isNullish(profileRoster)) {
+      throw new UnAuthorizedError('이미 조직 로스터에 있는 프로필입니다.');
+    }
+
+    await this._organizationRepo.addProfileToRoster(param);
   }
 }
