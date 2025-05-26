@@ -15,6 +15,13 @@
       "when": 1748227340811,
       "tag": "0001_profile_connections_table_idx",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1748232614615,
+      "tag": "0002_organizations_add_columns",
+      "breakpoints": true
     }
   ]
 }

@@ -14,7 +14,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestUser } from 'src/auth/auth.types';
 import { ReqUser } from 'src/decorator/request-user.decorator';
 import { OrganiztionsService } from './organizations.service';
-import { CreateClassValidator } from './organizations.validator';
+import { CreateClassValidator, CreateOrganizationValidator } from './organizations.validator';
 import { Symbols } from 'symbols';
 
 @Controller('organizations')
@@ -26,9 +26,11 @@ export class OrganizationsController {
   ) {}
 
   @Post()
-  public async createOrganization(@ReqUser() user: RequestUser): Promise<string> {
-    // 조직 생성 로직을 여기에 추가합니다.
-    return '조직이 성공적으로 생성되었습니다.';
+  public async createOrganization(
+    @ReqUser() user: RequestUser,
+    @Body() param: CreateOrganizationValidator
+  ) {
+    await this._organizationsService.createOrganization({ ...user, ...param });
   }
 
   @Put(':id')
