@@ -1,5 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { AddProfileToRosterParam, CreateOrganizationParam } from './organizations.types';
+import {
+  AddProfileToRosterParam,
+  CreateOrganizationParam,
+  IOrganizationOwnershipLoader,
+  OrganizationOwnership,
+} from './organizations.types';
 import { IOrganizationsRepository } from './organizations.repository';
 import { Symbols } from 'symbols';
 import { isIncludedIn, isNullish } from 'remeda';
@@ -10,14 +15,28 @@ import {
 import { UnAuthorizedError } from 'src/errors/errors';
 import { IProfilesLoader } from 'src/users/profiles/profiles.types';
 import { RequestUser } from 'src/auth/auth.types';
+import { Nullable } from 'src/common.types';
 
 @Injectable()
-export class OrganiztionsService {
+export class OrganiztionsService implements IOrganizationOwnershipLoader {
   public constructor(
     @Inject(Symbols.OrganizationsRepository)
     private readonly _organizationRepo: IOrganizationsRepository,
     @Inject(Symbols.ProfilesLoader) private readonly _profileLoader: IProfilesLoader
   ) {}
+
+  public async findOwnershipByProfileIdAndOrganizationId({
+    profileId: requestProfileId,
+    organizationId,
+  }: {
+    profileId: string;
+    organizationId: number;
+  }): Promise<Nullable<OrganizationOwnership>> {
+    return await this._organizationRepo.findOwnershipByProfileIdAndOrganizationId({
+      profileId: requestProfileId,
+      organizationId,
+    });
+  }
 
   public async getAllOrganizations(user: RequestUser) {
     const { profileId } = user;
@@ -67,7 +86,7 @@ export class OrganiztionsService {
       throw new UnAuthorizedError('프로필이 선택되지 않았습니다. 프로필을 선택해주세요.');
     }
 
-    const ownership = await this._organizationRepo.findOwnershipByProfileIdAndOrganizationId({
+    const ownership = this.findOwnershipByProfileIdAndOrganizationId({
       profileId: requestProfileId,
       organizationId,
     });
