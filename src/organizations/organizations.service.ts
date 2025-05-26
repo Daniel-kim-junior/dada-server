@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
+  AddProfileToOrganizationOwnershipParam,
   AddProfileToRosterParam,
   CreateOrganizationParam,
   IOrganizationOwnershipLoader,
@@ -7,7 +8,7 @@ import {
 } from './organizations.types';
 import { IOrganizationsRepository } from './organizations.repository';
 import { Symbols } from 'symbols';
-import { isIncludedIn, isNullish } from 'remeda';
+import { isIncludedIn, isNonNullish, isNullish } from 'remeda';
 import {
   CREATE_ORGANIZATION_PROFILE_ROLES,
   PROFILE_CONFIRM_ROLES,
@@ -16,6 +17,7 @@ import { UnAuthorizedError } from 'src/errors/errors';
 import { IProfilesLoader } from 'src/users/profiles/profiles.types';
 import { RequestUser } from 'src/auth/auth.types';
 import { Nullable } from 'src/common.types';
+import { ORGANIZATION_OWNERSHIP_ROLES } from './constants';
 
 @Injectable()
 export class OrganiztionsService implements IOrganizationOwnershipLoader {
@@ -66,6 +68,49 @@ export class OrganiztionsService implements IOrganizationOwnershipLoader {
     return organiztionRosters;
   }
 
+  public async addProfileToOrganizationOwnership(param: AddProfileToOrganizationOwnershipParam) {
+    const { addProfileId, organizationId, profileId: requestProfileId, role } = param;
+    if (isNullish(requestProfileId)) {
+      throw new UnAuthorizedError('프로필이 선택되지 않았습니다. 프로필을 선택해주세요.');
+    }
+    /**
+     * 주관리자만이 조직 소유권을 추가할 수 있습니다.
+     */
+    const ownership = await this.findOwnershipByProfileIdAndOrganizationId({
+      profileId: requestProfileId,
+      organizationId,
+    });
+
+    if (isNullish(ownership) || ownership.role !== ORGANIZATION_OWNERSHIP_ROLES.MAIN) {
+      throw new UnAuthorizedError(
+        '조직 소유권을 추가할 수 있는 권한이 없습니다. 조직 소유권을 추가할 수 있는 프로필로 로그인해주세요.'
+      );
+    }
+
+    const foundProfile = await this._profileLoader.getProfileById(addProfileId);
+    if (isNullish(foundProfile)) {
+      throw new UnAuthorizedError('존재하지 않는 프로필입니다.');
+    }
+
+    if (!foundProfile.isOrganizationAuth()) {
+      throw new UnAuthorizedError(
+        `프로필 역할이 조직 소유권에 대한 권한을 부여받을 수 없습니다. 현재 프로필 역할: ${foundProfile.role}, 필요한 프로필 역할: ${CREATE_ORGANIZATION_PROFILE_ROLES.join(', ')}`
+      );
+    }
+    const foundOwnership = await this._organizationRepo.findOwnershipByProfileIdAndOrganizationId({
+      profileId: addProfileId,
+      organizationId,
+    });
+    if (isNonNullish(foundOwnership)) {
+      throw new UnAuthorizedError('이미 조직 소유권에 있는 프로필입니다.');
+    }
+
+    await this._organizationRepo.createOrganizationOwnership({
+      organizationId,
+      addProfileId,
+      role,
+    });
+  }
   public async createOrganization(param: CreateOrganizationParam) {
     const { profileId, profileRole } = param;
     if (isNullish(profileId)) {

@@ -14,6 +14,7 @@ import { RequestUser } from 'src/auth/auth.types';
 import { ReqUser } from 'src/decorator/request-user.decorator';
 import { OrganiztionsService } from './organizations.service';
 import {
+  AddProfileToOrganizationOwnershipValidator,
   AddProfileToRosterValidator,
   CreateOrganizationValidator,
 } from './organizations.validator';
@@ -69,6 +70,19 @@ export class OrganizationsController {
     @Body() param: AddProfileToRosterValidator
   ): Promise<void> {
     await this._organizationsService.addProfileToOrganizationRoster({
+      ...user,
+      ...param,
+      organizationId: id,
+    });
+  }
+
+  @Post(':id/ownership')
+  public async addProfileToOrganizationOwnership(
+    @ReqUser() user: RequestUser,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() param: AddProfileToOrganizationOwnershipValidator
+  ): Promise<void> {
+    await this._organizationsService.addProfileToOrganizationOwnership({
       ...user,
       ...param,
       organizationId: id,

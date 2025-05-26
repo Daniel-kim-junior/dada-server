@@ -1,15 +1,20 @@
 import { RequestUser } from 'src/auth/auth.types';
 import {
+  AddProfileToOrganizationOwnershipValidator,
   AddProfileToRosterValidator,
   CreateOrganizationValidator,
 } from './organizations.validator';
 import { Nullable } from 'src/common.types';
-import { Profile } from 'passport';
 import { ProfileRole } from 'src/users/profiles/profiles.types';
+import { ORGANIZATION_OWNERSHIP_ROLES } from './constants';
 
 export type CreateOrganizationParam = InstanceType<typeof CreateOrganizationValidator> &
   RequestUser;
 export type AddProfileToRosterParam = InstanceType<typeof AddProfileToRosterValidator> &
+  RequestUser & { organizationId: number };
+export type AddProfileToOrganizationOwnershipParam = InstanceType<
+  typeof AddProfileToOrganizationOwnershipValidator
+> &
   RequestUser & { organizationId: number };
 
 export type OrganizationOwnership = {
@@ -62,3 +67,5 @@ export type IOrganizationOwnershipLoader = {
     organizationId: number;
   }): Promise<Nullable<OrganizationOwnership>>;
 };
+
+export type OrganizationRole = keyof typeof ORGANIZATION_OWNERSHIP_ROLES;

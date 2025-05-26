@@ -4,6 +4,7 @@ import {
   CreateOrganizationParam,
   Organization,
   OrganizationOwnership,
+  OrganizationRole,
   OrganizationRoster,
   OrganizationRosterProfile,
   OrganizationRosterWithOrganization,
@@ -26,6 +27,15 @@ export type IOrganizationsRepository = {
   addProfileToRoster(param: AddProfileToRosterParam): Promise<void>;
   findAllOrganizations(): Promise<Organization[]>;
   findRostersByOrgnizationId(organizationId: number): Promise<OrganizationRosterProfile[]>;
+  createOrganizationOwnership({
+    organizationId,
+    addProfileId,
+    role,
+  }: {
+    organizationId: number;
+    addProfileId: string;
+    role: OrganizationRole;
+  }): Promise<void>;
   findOwnershipByProfileIdAndOrganizationId({
     profileId,
     organizationId,
@@ -47,6 +57,21 @@ export type IOrganizationsRepository = {
 @Injectable()
 export class OrganizationsRepositoryDrizzle implements IOrganizationsRepository {
   public constructor(@Inject(Symbols.Database) private readonly _db: Database) {}
+  public async createOrganizationOwnership({
+    organizationId,
+    addProfileId,
+    role,
+  }: {
+    organizationId: number;
+    addProfileId: string;
+    role: OrganizationRole;
+  }): Promise<void> {
+    await this._db.insert(OrganizationOwnerships).values({
+      organizationId,
+      profileId: addProfileId,
+      role,
+    });
+  }
 
   public async findRostersByOrgnizationId(
     organizationId: number
