@@ -3,11 +3,15 @@ import { IProfilesRepository } from './profiles.repository';
 import { Nullable } from 'src/common.types';
 import { ProfilesEntity } from './profiles.entity';
 import { Symbols } from 'symbols';
-import { CreateProfileParam, IProfilesLoader } from './profiles.types';
+import {
+  CreateProfileConnectionParam,
+  CreateProfileParam,
+  IProfilesLoader,
+} from './profiles.types';
 import { RequestUser } from 'src/auth/auth.types';
 import { isIncludedIn, isNullish } from 'remeda';
 import { RoleError, UnAuthorizedError } from 'src/errors/errors';
-import { PROFILE_CONFIRM_ROLES } from './profiles.constant';
+import { PROFILE_CONFIRM_ROLES, PROFILE_CONNECTION_STATUS } from './profiles.constant';
 
 @Injectable()
 export class ProfilesService implements IProfilesLoader {
@@ -68,5 +72,46 @@ export class ProfilesService implements IProfilesLoader {
 
   public async getProfileById(profileId: string): Promise<Nullable<ProfilesEntity>> {
     return await this._profilesRepo.getProfileById(profileId);
+  }
+
+  public async createProfileConnection(param: CreateProfileConnectionParam) {
+    const { profileId: requesterProfileId, targetProfileId, userId } = param;
+
+    if (requesterProfileId === targetProfileId) {
+      throw new UnAuthorizedError('자신에게 연결 요청을 보낼 수 없습니다');
+    }
+
+    const requesterProfile = await this._profilesRepo.getProfileById(requesterProfileId);
+    if (isNullish(requesterProfile)) {
+      throw new UnAuthorizedError(
+        `요청 프로필이 존재하지 않는 프로필입니다. id: ${requesterProfileId}`
+      );
+    }
+
+    const profiles = await this._profilesRepo.getProfilesByUserId(userId);
+    const targetProfileIdInUser = profiles.find((profile) => profile.id === targetProfileId);
+    if (!isNullish(targetProfileIdInUser)) {
+      throw new UnAuthorizedError('같은 사용자에 속한 프로필에게 연결 요청을 보낼 수 없습니다');
+    }
+
+    const targetProfile = await this._profilesRepo.getProfileById(targetProfileId);
+    if (isNullish(targetProfile)) {
+      throw new UnAuthorizedError('대상 프로필이 존재하지 않는 프로필입니다');
+    }
+
+    if (
+      targetProfile.role === requesterProfile.role ||
+      !isIncludedIn(targetProfile.role, PROFILE_CONFIRM_ROLES) ||
+      !isIncludedIn(requesterProfile.role, PROFILE_CONFIRM_ROLES)
+    ) {
+      throw new UnAuthorizedError(
+        `대상 프로필의 역할이 요청 프로필과 동일하거나 연결 요청을 확인할 수 없는 역할입니다. 요청 프로필 역할: ${requesterProfile.role}, 대상 프로필 역할: ${targetProfile.role}`
+      );
+    }
+
+    await this._profilesRepo.createProfileConnection({
+      ...param,
+      status: PROFILE_CONNECTION_STATUS.PENDING,
+    });
   }
 }

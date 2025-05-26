@@ -131,6 +131,7 @@ CREATE TABLE `profile_connections` (
 	`status` varchar(50) NOT NULL,
 	`requester_profile_id` varchar(36) NOT NULL,
 	`target_profile_id` varchar(36) NOT NULL,
+	`message` varchar(255),
 	`created_at` timestamp DEFAULT (now()),
 	`deleted_at` timestamp,
 	`updated_at` timestamp DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,

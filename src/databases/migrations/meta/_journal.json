@@ -5,8 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1748141151077,
-      "tag": "0000_create_basic_tables",
+      "when": 1748221499894,
+      "tag": "0000_init_migration_tables",
       "breakpoints": true
     }
   ]

@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Patch, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestUser } from 'src/auth/auth.types';
 import { ReqUser } from 'src/decorator/request-user.decorator';
 import { ProfilesService } from './profiles.service';
 import { Symbols } from 'symbols';
-import { CreateProfileValidator } from './profiles.validator';
+import { CreateProfileConnectionValidator, CreateProfileValidator } from './profiles.validator';
 
 @Controller('users/profiles')
 @UseGuards(JwtAuthGuard)
@@ -32,9 +32,24 @@ export class ProfilesController {
   }
 
   @Post('/connection')
-  public async createProfileConnection(@ReqUser() user: RequestUser): Promise<string> {
-    // 프로필 연결 요청 로직을 여기에 추가합니다.
-    return '프로필 연결 요청이 성공적으로 전송되었습니다.';
+  public async createProfileConnection(
+    @ReqUser() user: RequestUser,
+    @Body() param: CreateProfileConnectionValidator
+  ) {
+    await this._profileService.createProfileConnection({ ...user, ...param });
+  }
+
+  /**
+   *
+   * @param user가 거부하거나 승인할 수 있음
+   * @param param
+   */
+  @Patch('/connection/:connectionId')
+  public async updateProfileConnection(
+    @ReqUser() user: RequestUser,
+    @Body() param: CreateProfileConnectionValidator
+  ) {
+    // await this._profileService.updateProfileConnection({ ...user, ...param });
   }
 
   @Get('/connections')

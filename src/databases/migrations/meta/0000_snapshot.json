@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "b23b77e3-113e-403f-8dcf-ca9eb883b689",
+  "id": "2f05f211-c3df-412e-8f5d-5d755766db75",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "auth": {
@@ -304,8 +304,8 @@
     "course_profiles": {
       "name": "course_profiles",
       "columns": {
-        "cource_id": {
-          "name": "cource_id",
+        "course_id": {
+          "name": "course_id",
           "type": "serial",
           "primaryKey": false,
           "notNull": true,
@@ -838,6 +838,13 @@
           "type": "varchar(36)",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "message": {
+          "name": "message",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "created_at": {

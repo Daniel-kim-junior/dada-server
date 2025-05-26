@@ -1,5 +1,6 @@
 import { IsIn } from 'class-validator';
-import { PROFILE_ROLES, ProfileRole, Profiles } from './profiles.types';
+import { ProfileRole, Profiles } from './profiles.types';
+import { PROFILE_ROLES } from './profiles.constant';
 
 export class ProfilesEntity {
   private _createdAt: Date;

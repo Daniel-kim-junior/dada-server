@@ -6,19 +6,44 @@ import { Symbols } from 'symbols';
 import { ProfileConnections, Profiles } from 'src/databases/schemas';
 import { eq, or } from 'drizzle-orm';
 import { isEmpty } from 'remeda';
-import { CreateProfileParam } from './profiles.types';
+import {
+  CreateProfileConnectionParam,
+  CreateProfileParam,
+  ProfileConnectionStatus,
+} from './profiles.types';
 import { ProfileConnectionsEntity } from './profile-connection.entity';
 
 export type IProfilesRepository = {
   getProfileById(profileId: string): Promise<Nullable<ProfilesEntity>>;
   getProfilesByUserId(userId: string): Promise<ProfilesEntity[]>;
   createProfile(param: CreateProfileParam): Promise<void>;
+  createProfileConnection(
+    param: CreateProfileConnectionParam & {
+      status: ProfileConnectionStatus;
+    }
+  ): Promise<void>;
   getConfirmedProfileConnection(profileId: string): Promise<ProfileConnectionsEntity>;
 };
 
 @Injectable()
 export class ProfilesRepositoryDrizzle implements IProfilesRepository {
   public constructor(@Inject(Symbols.Database) private readonly _db: Database) {}
+  public async createProfileConnection(
+    param: CreateProfileConnectionParam & {
+      status: ProfileConnectionStatus;
+    }
+  ): Promise<void> {
+    const { profileId: requesterProfileId, targetProfileId, message, status } = param;
+    await this._db
+      .insert(ProfileConnections)
+      .values({
+        status,
+        requesterProfileId,
+        targetProfileId,
+        message,
+      })
+      .execute();
+  }
 
   /**
    * 프로필 연결 확인
