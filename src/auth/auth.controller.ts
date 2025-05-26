@@ -22,7 +22,11 @@ export class AuthController {
     @ReqUser() user: RequestUser,
     @Body() param: UserProfileSelectValidator
   ): Promise<SignInResponse> {
-    const res = await this._authService.selectProfile({ ...param, ...user });
+    const res = await this._authService.selectProfile({
+      profileId: param.profileId,
+      userId: user.userId,
+      permissions: user.permissions,
+    });
     return res;
   }
 }
