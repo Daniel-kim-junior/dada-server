@@ -9,6 +9,13 @@ export class ProfileConnectionsEntity {
     return entity;
   }
 
+  public onlyOneConnection() {
+    if (this.isEmpty()) {
+      return null;
+    }
+    return this._profileConnections[0];
+  }
+
   public isEmpty() {
     return this._profileConnections.length === 0;
   }

@@ -1,10 +1,24 @@
-import { Body, Controller, Get, Inject, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestUser } from 'src/auth/auth.types';
 import { ReqUser } from 'src/decorator/request-user.decorator';
 import { ProfilesService } from './profiles.service';
 import { Symbols } from 'symbols';
-import { CreateProfileConnectionValidator, CreateProfileValidator } from './profiles.validator';
+import {
+  CreateProfileConnectionValidator,
+  CreateProfileValidator,
+  UpdateProfileConnectionValidator,
+} from './profiles.validator';
 
 @Controller('users/profiles')
 @UseGuards(JwtAuthGuard)
@@ -13,9 +27,22 @@ export class ProfilesController {
     @Inject(Symbols.ProfilesService) private readonly _profileService: ProfilesService
   ) {}
 
-  @Get('list')
+  /**
+   * 요청한 사용자의 프로필 목록 조회
+   */
+  @Get('/my/list')
   public async getProfileList(@ReqUser() user: RequestUser) {
-    return await this._profileService.getProfiles(user);
+    return await this._profileService.getMyProfiles(user);
+  }
+
+  /**
+   *
+   * 모든 프로필 조회 (추후 검색 기능 추가)
+   * 이 리스트에서 연결하고 싶은 프로필을 선택하여 연결할 수 있음
+   */
+  @Get('/list')
+  public async getAllProfiles() {
+    return await this._profileService.getAllProfiles();
   }
 
   @Get()
@@ -47,9 +74,10 @@ export class ProfilesController {
   @Patch('/connection/:connectionId')
   public async updateProfileConnection(
     @ReqUser() user: RequestUser,
-    @Body() param: CreateProfileConnectionValidator
+    @Param('connectionId', ParseIntPipe) connectionId: number,
+    @Body() param: UpdateProfileConnectionValidator
   ) {
-    // await this._profileService.updateProfileConnection({ ...user, ...param });
+    await this._profileService.updateProfileConnection({ ...user, connectionId, ...param });
   }
 
   @Get('/connections')

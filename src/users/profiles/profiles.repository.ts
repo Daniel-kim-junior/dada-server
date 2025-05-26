@@ -5,7 +5,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Symbols } from 'symbols';
 import { ProfileConnections, Profiles } from 'src/databases/schemas';
 import { eq, or } from 'drizzle-orm';
-import { isEmpty } from 'remeda';
+import { isEmpty, isNullish } from 'remeda';
 import {
   CreateProfileConnectionParam,
   CreateProfileParam,
@@ -15,19 +15,44 @@ import { ProfileConnectionsEntity } from './profile-connection.entity';
 
 export type IProfilesRepository = {
   getProfileById(profileId: string): Promise<Nullable<ProfilesEntity>>;
-  getProfilesByUserId(userId: string): Promise<ProfilesEntity[]>;
+  getProfiles(userId?: string): Promise<ProfilesEntity[]>;
+  getConnectionProfileById(connectionId: number): Promise<ProfileConnectionsEntity>;
   createProfile(param: CreateProfileParam): Promise<void>;
   createProfileConnection(
     param: CreateProfileConnectionParam & {
       status: ProfileConnectionStatus;
     }
   ): Promise<void>;
-  getConfirmedProfileConnection(profileId: string): Promise<ProfileConnectionsEntity>;
+  getProfileConnectionsByProfileId(profileId: string): Promise<ProfileConnectionsEntity>;
+  updateProfileConnectionStatus(
+    connectionId: number,
+    status: ProfileConnectionStatus
+  ): Promise<void>;
 };
 
 @Injectable()
 export class ProfilesRepositoryDrizzle implements IProfilesRepository {
   public constructor(@Inject(Symbols.Database) private readonly _db: Database) {}
+  public async updateProfileConnectionStatus(
+    connectionId: number,
+    status: ProfileConnectionStatus
+  ): Promise<void> {
+    await this._db
+      .update(ProfileConnections)
+      .set({ status })
+      .where(eq(ProfileConnections.id, connectionId))
+      .execute();
+  }
+
+  public async getConnectionProfileById(connectionId: number): Promise<ProfileConnectionsEntity> {
+    const founds = await this._db
+      .select()
+      .from(ProfileConnections)
+      .where(eq(ProfileConnections.id, connectionId))
+      .limit(1);
+    return ProfileConnectionsEntity.of(founds);
+  }
+
   public async createProfileConnection(
     param: CreateProfileConnectionParam & {
       status: ProfileConnectionStatus;
@@ -46,11 +71,13 @@ export class ProfilesRepositoryDrizzle implements IProfilesRepository {
   }
 
   /**
-   * 프로필 연결 확인
+   * 자신이 요청하거나 받은 프로필 연결 리스트 조회
    * @param profileId
    * @returns
    */
-  public async getConfirmedProfileConnection(profileId: string): Promise<ProfileConnectionsEntity> {
+  public async getProfileConnectionsByProfileId(
+    profileId: string
+  ): Promise<ProfileConnectionsEntity> {
     const founds = await this._db
       .select()
       .from(ProfileConnections)
@@ -63,7 +90,12 @@ export class ProfilesRepositoryDrizzle implements IProfilesRepository {
     return ProfileConnectionsEntity.of(founds);
   }
 
-  public async getProfilesByUserId(userId: string): Promise<ProfilesEntity[]> {
+  public async getProfiles(userId?: string): Promise<ProfilesEntity[]> {
+    if (isNullish(userId)) {
+      // 모든 프로필 조회
+      const founds = await this._db.select().from(Profiles);
+      return founds.map((found) => ProfilesEntity.of(found));
+    }
     const founds = await this._db.select().from(Profiles).where(eq(Profiles.userId, userId));
     return founds.map((found) => ProfilesEntity.of(found));
   }
