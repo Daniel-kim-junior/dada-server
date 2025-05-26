@@ -1,14 +1,9 @@
 import { RequestUser } from 'src/auth/auth.types';
 import {
   AddProfileToRosterValidator,
-  CreateClassValidator,
   CreateOrganizationValidator,
 } from './organizations.validator';
-
-export type CreateClassParam = InstanceType<typeof CreateClassValidator> &
-  RequestUser & {
-    organizationId: number;
-  };
+import { Nullable } from 'src/common.types';
 
 export type CreateOrganizationParam = InstanceType<typeof CreateOrganizationValidator> &
   RequestUser;
@@ -38,4 +33,14 @@ export type Organization = {
 export type OrganizationRoster = {
   profileId: string;
   organizationId: number;
+};
+
+export type IOrganizationOwnershipLoader = {
+  findOwnershipByProfileIdAndOrganizationId({
+    profileId,
+    organizationId,
+  }: {
+    profileId: string;
+    organizationId: number;
+  }): Promise<Nullable<OrganizationOwnership>>;
 };

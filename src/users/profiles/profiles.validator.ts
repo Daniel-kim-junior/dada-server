@@ -1,15 +1,11 @@
 import { IsDefined, IsIn, IsString, IsUUID, Length, ValidateIf } from 'class-validator';
 import { ProfileConnectionStatus, ProfileRole } from './profiles.types';
 import { isNullish } from 'remeda';
-import {
-  PROFILE_CONNECTION_STATUS,
-  PROFILE_CONNECTION_STATUS_LIST,
-  PROFILE_ROLES,
-} from './profiles.constant';
+import { PROFILE_CONNECTION_STATUS_LIST, PROFILE_ROLE_LIST } from './profiles.constant';
 
 export class CreateProfileValidator {
   @IsDefined()
-  @IsIn(PROFILE_ROLES)
+  @IsIn(PROFILE_ROLE_LIST)
   public role: ProfileRole;
 
   @IsDefined()

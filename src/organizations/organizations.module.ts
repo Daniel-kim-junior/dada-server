@@ -19,6 +19,11 @@ import { ProfilesModule } from 'src/users/profiles/profiles.module';
       provide: Symbols.OrganizationsRepository,
       useClass: OrganizationsRepositoryDrizzle,
     },
+    {
+      provide: Symbols.OrganizationOwnershipLoader,
+      useExisting: Symbols.OrganizationsService,
+    },
   ],
+  exports: [Symbols.OrganizationOwnershipLoader],
 })
-export class OrganiztionsModule {}
+export class OrganizationsModule {}

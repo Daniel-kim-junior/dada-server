@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Inject,
   Param,
@@ -16,10 +15,10 @@ import { ReqUser } from 'src/decorator/request-user.decorator';
 import { OrganiztionsService } from './organizations.service';
 import {
   AddProfileToRosterValidator,
-  CreateClassValidator,
   CreateOrganizationValidator,
 } from './organizations.validator';
 import { Symbols } from 'symbols';
+import { Organization } from './organizations.types';
 
 @Controller('organizations')
 @UseGuards(JwtAuthGuard)
@@ -37,19 +36,19 @@ export class OrganizationsController {
     await this._organizationsService.createOrganization({ ...user, ...param });
   }
 
-  @Put(':id')
-  public async updateOrganization(
-    @ReqUser() user: RequestUser,
-    @Param('id', ParseIntPipe) id: number
-  ): Promise<string> {
-    // 조직 업데이트 로직을 여기에 추가합니다.
-    return '조직이 성공적으로 업데이트되었습니다.';
+  @Get('/my/rosters')
+  public async getMyOrganizationRosters(@ReqUser() user: RequestUser) {
+    /**
+     * 해당 유저가 속한 조직 목록을 조회합니다
+     */
+    return {
+      rosters: await this._organizationsService.getMyOrganizationRosters(user),
+    };
   }
 
-  @Get()
-  public async getOrganizations(@ReqUser() user: RequestUser): Promise<string> {
-    // 조직 목록 조회 로직을 여기에 추가합니다.
-    return '조직 목록이 성공적으로 조회되었습니다.';
+  @Get('/all')
+  public async getAllOrganizations(@ReqUser() user: RequestUser): Promise<Organization[]> {
+    return await this._organizationsService.getAllOrganizations(user);
   }
 
   @Get(':id')
@@ -61,29 +60,7 @@ export class OrganizationsController {
     return '조직이 성공적으로 조회되었습니다.';
   }
 
-  @Get(':id/classes')
-  public async getOrganizationClasses(
-    @ReqUser() user: RequestUser,
-    @Param('id', ParseIntPipe) id: number
-  ): Promise<string> {
-    // 조직에 속한 수업 목록 조회 로직을 여기에 추가합니다.
-    return '조직의 수업 목록이 성공적으로 조회되었습니다.';
-  }
-
-  @Post(':id/classes')
-  public async addClassToOrganization(
-    @ReqUser() user: RequestUser,
-    @Param('id', ParseIntPipe) id: number,
-    @Body() param: CreateClassValidator
-  ): Promise<void> {
-    await this._organizationsService.addClassToOrganization({
-      ...user,
-      ...param,
-      organizationId: id,
-    });
-  }
-
-  @Get(':id/roster')
+  @Get(':id/rosters')
   public async getOrganizationRoster(
     @ReqUser() user: RequestUser,
     @Param('id', ParseIntPipe) id: number
@@ -103,24 +80,5 @@ export class OrganizationsController {
       ...param,
       organizationId: id,
     });
-  }
-
-  @Delete(':id/roster/:profileId')
-  public async removeProfileFromOrganizationRoster(
-    @ReqUser() user: RequestUser,
-    @Param('id', ParseIntPipe) id: number,
-    @Param('profileId', ParseIntPipe) profileId: number
-  ): Promise<string> {
-    // 조직에서 프로필을 제거하는 로직을 여기에 추가합니다.
-    return '프로필이 조직의 로스터에서 성공적으로 제거되었습니다.';
-  }
-
-  @Delete(':id')
-  public async deleteOrganization(
-    @ReqUser() user: RequestUser,
-    @Param('id', ParseIntPipe) id: number
-  ): Promise<string> {
-    // 조직 삭제 로직을 여기에 추가합니다.
-    return '조직이 성공적으로 삭제되었습니다.';
   }
 }

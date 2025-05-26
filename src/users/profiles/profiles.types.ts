@@ -4,11 +4,11 @@ import { Nullable } from 'src/common.types';
 import { ProfilesEntity } from './profiles.entity';
 import {
   PROFILE_CONFIRM_ROLES,
-  PROFILE_ROLES,
   PROFILE_CONNECTION_STATUS,
+  PROFILE_ROLE_LIST,
 } from './profiles.constant';
 
-export type ProfileRole = (typeof PROFILE_ROLES)[number];
+export type ProfileRole = (typeof PROFILE_ROLE_LIST)[number];
 export type ProfileConnectionStatus = keyof typeof PROFILE_CONNECTION_STATUS;
 export type Profiles = {
   createdAt: Date;

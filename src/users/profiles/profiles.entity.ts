@@ -1,4 +1,3 @@
-import { IsIn } from 'class-validator';
 import { ProfileRole, Profiles } from './profiles.types';
 import { PROFILE_ROLES } from './profiles.constant';
 
@@ -13,9 +12,6 @@ export class ProfilesEntity {
   private _introduction: string;
   private _role: ProfileRole;
 
-  @IsIn(PROFILE_ROLES)
-  public role: ProfileRole;
-
   public static of(profile: Profiles): ProfilesEntity {
     const entity = new ProfilesEntity();
     entity._role = profile.role;
@@ -27,7 +23,7 @@ export class ProfilesEntity {
     entity._profilePicture = profile.profilePicture;
     entity._nickname = profile.nickname;
     entity._introduction = profile.introduction;
-    entity.role = profile.role;
+    entity._role = profile.role;
 
     return entity;
   }
@@ -44,7 +40,23 @@ export class ProfilesEntity {
     };
   }
 
+  public isOrganizationAuth(): boolean {
+    return this._role === PROFILE_ROLES.ADMIN || this._role === PROFILE_ROLES.INSTRUCTOR;
+  }
+
+  public isStudent(): boolean {
+    return this._role === PROFILE_ROLES.STUDENT;
+  }
+
+  public isParents(): boolean {
+    return this._role === PROFILE_ROLES.PARENTS;
+  }
+
   public get id(): string {
     return this._id;
+  }
+
+  public get role() {
+    return this._role;
   }
 }

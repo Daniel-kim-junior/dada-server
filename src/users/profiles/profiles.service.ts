@@ -108,8 +108,10 @@ export class ProfilesService implements IProfilesLoader {
 
     if (
       targetProfile.role === requesterProfile.role ||
-      !isIncludedIn(targetProfile.role, PROFILE_CONFIRM_ROLES) ||
-      !isIncludedIn(requesterProfile.role, PROFILE_CONFIRM_ROLES)
+      !targetProfile.isParents() ||
+      !targetProfile.isStudent() ||
+      !requesterProfile.isParents() ||
+      !requesterProfile.isStudent()
     ) {
       throw new UnAuthorizedError(
         `대상 프로필의 역할이 요청 프로필과 동일하거나 연결 요청을 확인할 수 없는 역할입니다. 요청 프로필 역할: ${requesterProfile.role}, 대상 프로필 역할: ${targetProfile.role}`
