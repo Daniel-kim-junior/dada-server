@@ -1,4 +1,3 @@
-import { NEED_CONFIRMATION } from './profiles.constant';
 import { ProfileConnections } from './profiles.types';
 
 export class ProfileConnectionsEntity {

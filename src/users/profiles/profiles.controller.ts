@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  Param,
-  ParseIntPipe,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestUser } from 'src/auth/auth.types';
 import { ReqUser } from 'src/decorator/request-user.decorator';
@@ -20,17 +10,17 @@ import { CreateProfileValidator } from './profiles.validator';
 @UseGuards(JwtAuthGuard)
 export class ProfilesController {
   public constructor(
-    @Inject(Symbols.ProfilesService) private readonly _profieService: ProfilesService
+    @Inject(Symbols.ProfilesService) private readonly _profileService: ProfilesService
   ) {}
 
   @Get('list')
   public async getProfileList(@ReqUser() user: RequestUser) {
-    return await this._profieService.getProfiles(user);
+    return await this._profileService.getProfiles(user);
   }
 
   @Get()
   public async getProfile(@ReqUser() user: RequestUser) {
-    return await this._profieService.getProfile(user);
+    return await this._profileService.getProfile(user);
   }
 
   @Post()
@@ -38,16 +28,7 @@ export class ProfilesController {
     @ReqUser() user: RequestUser,
     @Body() param: CreateProfileValidator
   ): Promise<void> {
-    await this._profieService.createProfile({ ...user, ...param });
-  }
-
-  @Put(':id')
-  public async updateProfile(
-    @ReqUser() user: RequestUser,
-    @Param('id', ParseIntPipe) id: number
-  ): Promise<string> {
-    // 프로필 업데이트 로직을 여기에 추가합니다.
-    return '프로필이 성공적으로 업데이트되었습니다.';
+    await this._profileService.createProfile({ ...user, ...param });
   }
 
   @Post('/connection')
@@ -58,6 +39,6 @@ export class ProfilesController {
 
   @Get('/connections')
   public async getProfileConnections(@ReqUser() user: RequestUser) {
-    return await this._profieService.getProfileConnections(user);
+    return await this._profileService.getProfileConnections(user);
   }
 }
