@@ -58,6 +58,10 @@ export type OrganizationRosterWithOrganization = {
   organizationDescription: string;
 };
 
+export type IOrganizationsLoader = {
+  getOrganizationById(id: number): Promise<Nullable<Organization>>;
+};
+
 export type IOrganizationOwnershipLoader = {
   findOwnershipByProfileIdAndOrganizationId({
     profileId,

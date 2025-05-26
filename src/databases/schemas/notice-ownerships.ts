@@ -9,13 +9,13 @@ import { DateColumns } from './date-columns';
 export const NoticeOwnerships = mysqlTable(
   'notice_ownerships',
   {
-    id: serial('id').notNull(),
-    noticeId: bigint('notice_id', { mode: 'number' }).notNull(), // ID of the notice
+    referenceId: bigint('id', { mode: 'number' }).notNull(),
+    noticeId: bigint('notice_id', { mode: 'number' }).notNull(),
     type: varchar('type', { length: 50 }).notNull(),
-    registerProfileId: varchar('register_profile_id', { length: 36 }).notNull(), // UUID of the profile that owns the notice
+    registerProfileId: varchar('register_profile_id', { length: 36 }).notNull(),
     ...DateColumns,
   },
   (table) => ({
-    pk: primaryKey({ columns: [table.id, table.type] }),
+    pk: primaryKey({ columns: [table.referenceId, table.type] }),
   })
 );

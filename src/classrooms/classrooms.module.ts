@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ClassroomsService } from './classrooms.service';
 import { ClassroomsController } from './classrooms.controller';
-import { DatabaseModule } from 'src/databases/databases.module';
 import { Symbols } from 'symbols';
 import { ClassroomRepositoryDrizzle } from './classrooms.repository';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [],
   providers: [
     {
       provide: Symbols.ClassroomsService,

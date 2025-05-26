@@ -5,7 +5,6 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { Symbols } from 'symbols';
 import { AuthRepositoryDrizzle } from './auth.repository';
-import { DatabaseModule } from 'src/databases/databases.module';
 import { UsersModule } from 'src/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt/jwt.strategy';
@@ -31,7 +30,6 @@ import { ProfilesModule } from 'src/users/profiles/profiles.module';
       },
       inject: [ConfigService],
     }),
-    DatabaseModule,
     UsersModule,
     ProfilesModule,
   ],

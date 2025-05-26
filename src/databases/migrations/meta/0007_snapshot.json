@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "1cff86c7-3dd6-46db-a496-b4e305af54e3",
-  "prevId": "41afb06d-4e61-468b-ba5c-223435b56b3f",
+  "id": "d27833eb-39f8-45f2-8a90-039b7fd9c98d",
+  "prevId": "45aa30f3-1d75-4a9c-9e7b-67cd0df537e9",
   "tables": {
     "auth": {
       "name": "auth",
@@ -603,10 +603,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "notice_id": {
           "name": "notice_id",
@@ -689,7 +689,7 @@
           "name": "content",
           "type": "varchar(5000)",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "created_at": {
@@ -786,7 +786,16 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "profile_org_unique": {
+          "name": "profile_org_unique",
+          "columns": [
+            "profile_id",
+            "organization_id"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "organization_ownerships_id": {
@@ -831,7 +840,16 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "profile_org_roster_unique": {
+          "name": "profile_org_roster_unique",
+          "columns": [
+            "profile_id",
+            "organization_id"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "organizations_roster_id": {

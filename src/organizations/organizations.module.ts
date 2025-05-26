@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
 import { OrganiztionsService } from './organizations.service';
 import { OrganizationsController } from './organizations.controller';
-import { DatabaseModule } from 'src/databases/databases.module';
 import { Symbols } from 'symbols';
 import { OrganizationsRepositoryDrizzle } from './organizations.repository';
 import { ProfilesModule } from 'src/users/profiles/profiles.module';
 
 @Module({
-  imports: [DatabaseModule, ProfilesModule],
+  imports: [ProfilesModule],
   controllers: [OrganizationsController],
 
   providers: [
@@ -23,7 +22,11 @@ import { ProfilesModule } from 'src/users/profiles/profiles.module';
       provide: Symbols.OrganizationOwnershipLoader,
       useExisting: Symbols.OrganizationsService,
     },
+    {
+      provide: Symbols.OrganizationsLoader,
+      useExisting: Symbols.OrganizationsService,
+    },
   ],
-  exports: [Symbols.OrganizationOwnershipLoader],
+  exports: [Symbols.OrganizationOwnershipLoader, Symbols.OrganizationsLoader],
 })
 export class OrganizationsModule {}

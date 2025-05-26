@@ -43,6 +43,14 @@
       "when": 1748236611556,
       "tag": "0005_add_index_in_org_ownership_and_roster",
       "breakpoints": true
+    },
+ 
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1748256994342,
+      "tag": "0007_alter_notice_columns",
+      "breakpoints": true
     }
   ]
 }
