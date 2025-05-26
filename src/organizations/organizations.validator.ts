@@ -1,5 +1,7 @@
-import { IsNotEmpty, IsNumber, IsString, Length, ValidateIf } from 'class-validator';
+import { IsIn, IsNotEmpty, IsString, Length, ValidateIf } from 'class-validator';
 import { isNonNullish } from 'remeda';
+import { ORGANIZATION_OWNERSHIP_POSSIBLE_ROLE_LIST } from './constants';
+import { OrganizationRole } from './organizations.types';
 
 export class CreateOrganizationValidator {
   @IsString()
@@ -22,4 +24,17 @@ export class AddProfileToRosterValidator {
   @IsString()
   @IsNotEmpty()
   public addProfileId: string;
+}
+
+export class AddProfileToOrganizationOwnershipValidator {
+  @IsString()
+  @IsNotEmpty()
+  public addProfileId: string;
+
+  /**
+   * SUB role is the only possible role
+   */
+  @IsString()
+  @IsIn(ORGANIZATION_OWNERSHIP_POSSIBLE_ROLE_LIST)
+  public role: OrganizationRole;
 }
