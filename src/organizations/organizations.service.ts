@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
   AddProfileToRosterParam,
-  CreateClassParam,
   CreateOrganizationParam,
+  IOrganizationOwnershipLoader,
+  OrganizationOwnership,
 } from './organizations.types';
 import { IOrganizationsRepository } from './organizations.repository';
 import { Symbols } from 'symbols';
@@ -13,17 +14,56 @@ import {
 } from 'src/users/profiles/profiles.constant';
 import { UnAuthorizedError } from 'src/errors/errors';
 import { IProfilesLoader } from 'src/users/profiles/profiles.types';
+import { RequestUser } from 'src/auth/auth.types';
+import { Nullable } from 'src/common.types';
 
 @Injectable()
-export class OrganiztionsService {
+export class OrganiztionsService implements IOrganizationOwnershipLoader {
   public constructor(
     @Inject(Symbols.OrganizationsRepository)
     private readonly _organizationRepo: IOrganizationsRepository,
     @Inject(Symbols.ProfilesLoader) private readonly _profileLoader: IProfilesLoader
   ) {}
 
-  public async addClassToOrganization(param: CreateClassParam) {
-    await this._organizationRepo.createClass(param);
+  public async findOwnershipByProfileIdAndOrganizationId({
+    profileId: requestProfileId,
+    organizationId,
+  }: {
+    profileId: string;
+    organizationId: number;
+  }): Promise<Nullable<OrganizationOwnership>> {
+    return await this._organizationRepo.findOwnershipByProfileIdAndOrganizationId({
+      profileId: requestProfileId,
+      organizationId,
+    });
+  }
+
+  public async getAllOrganizations(user: RequestUser) {
+    const { profileId } = user;
+    if (isNullish(profileId)) {
+      throw new UnAuthorizedError('프로필이 선택되지 않았습니다. 프로필을 선택해주세요.');
+    }
+    const requestProfile = await this._profileLoader.getProfileById(profileId);
+    if (isNullish(requestProfile)) {
+      throw new UnAuthorizedError('존재하지 않는 프로필입니다.');
+    }
+    if (!requestProfile.isOrganizationAuth()) {
+      throw new UnAuthorizedError(
+        `프로필 역할이 조직 조회 권한이 없습니다. 현재 프로필 역할: ${requestProfile.role}, 필요한 프로필 역할: ${CREATE_ORGANIZATION_PROFILE_ROLES.join(', ')}`
+      );
+    }
+
+    return await this._organizationRepo.findAllOrganizations();
+  }
+
+  public async getMyOrganizationRosters(user: RequestUser) {
+    const { profileId } = user;
+    if (isNullish(profileId)) {
+      throw new UnAuthorizedError('프로필이 선택되지 않았습니다. 프로필을 선택해주세요.');
+    }
+
+    const organiztionRosters = await this._organizationRepo.findRostersByProfileId(profileId);
+    return organiztionRosters;
   }
 
   public async createOrganization(param: CreateOrganizationParam) {
@@ -40,13 +80,26 @@ export class OrganiztionsService {
     await this._organizationRepo.createOrganizationAndOwnership(param);
   }
 
+  public async getOrganizationRoster(parma: { profileId?: string; organizationId: number }) {
+    const { profileId, organizationId } = parma;
+    if (isNullish(profileId)) {
+      throw new UnAuthorizedError('프로필이 선택되지 않았습니다. 프로필을 선택해주세요.');
+    }
+    const foundOrganization = await this._organizationRepo.findOrganizationById(organizationId);
+    if (isNullish(foundOrganization)) {
+      throw new UnAuthorizedError('존재하지 않는 조직입니다.');
+    }
+
+    return await this._organizationRepo.findRostersByOrgnizationId(organizationId);
+  }
+
   public async addProfileToOrganizationRoster(param: AddProfileToRosterParam) {
     const { organizationId, addProfileId, profileId: requestProfileId } = param;
     if (isNullish(requestProfileId)) {
       throw new UnAuthorizedError('프로필이 선택되지 않았습니다. 프로필을 선택해주세요.');
     }
 
-    const ownership = await this._organizationRepo.findOwnershipByProfileIdAndOrganizationId({
+    const ownership = await this.findOwnershipByProfileIdAndOrganizationId({
       profileId: requestProfileId,
       organizationId,
     });
@@ -76,7 +129,7 @@ export class OrganiztionsService {
     /**
      * 프로필이 이미 조직 로스터에 있는지 확인합니다.
      */
-    const profileRoster = await this._organizationRepo.findRoasterByProfileIdAndOrganizationId({
+    const profileRoster = await this._organizationRepo.findRosterByProfileIdAndOrganizationId({
       profileId: addProfileId,
       organizationId,
     });

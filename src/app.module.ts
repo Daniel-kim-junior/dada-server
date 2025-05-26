@@ -4,7 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { ClassroomsModule } from './classrooms/classrooms.module';
 import { LecturesModule } from './lectures/lectures.module';
 import { ResourcesModule } from './resources/resources.module';
-import { OrganiztionsModule } from './organizations/organizations.module';
+import { OrganizationsModule } from './organizations/organizations.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './databases/databases.module';
 import { AppController } from './app.controller';
@@ -24,7 +24,7 @@ import { UsersModule } from './users/users.module';
     ClassroomsModule,
     UsersModule,
     LecturesModule,
-    OrganiztionsModule,
+    OrganizationsModule,
     ResourcesModule,
   ],
   providers: [AppService],

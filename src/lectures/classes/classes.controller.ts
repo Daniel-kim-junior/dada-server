@@ -1,11 +1,28 @@
-import { Controller, Delete, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  ParseIntPipe,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestUser } from 'src/auth/auth.types';
 import { ReqUser } from 'src/decorator/request-user.decorator';
+import { CreateClassValidator } from './classes.validator';
+import { Symbols } from 'symbols';
+import { ClassesService } from './classes.service';
 
 @Controller('classes')
 @UseGuards(JwtAuthGuard)
 export class ClassesController {
+  public constructor(
+    @Inject(Symbols.ClassesService) private readonly _classesService: ClassesService
+  ) {}
+
   @Get(':id')
   public async getClassById(
     @ReqUser() user: RequestUser,
@@ -22,9 +39,14 @@ export class ClassesController {
   }
 
   @Post()
-  public async createClass(@ReqUser() user: RequestUser): Promise<string> {
-    // 클래스 생성 로직을 여기에 추가합니다.
-    return '클래스가 성공적으로 생성되었습니다.';
+  public async addClassToOrganization(
+    @ReqUser() user: RequestUser,
+    @Body() param: CreateClassValidator
+  ): Promise<void> {
+    await this._classesService.addClassToOrganization({
+      ...user,
+      ...param,
+    });
   }
 
   @Delete(':id')
