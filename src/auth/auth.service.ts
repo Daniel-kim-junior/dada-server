@@ -60,6 +60,10 @@ export class AuthService {
       throw new UnAuthorizedError('존재하지 않는 프로필입니다');
     }
 
+    /**
+     * redis에 프로필 권한을 캐싱한다 (일단 공지사항 조회 권한)
+     */
+
     // JWT 토큰 생성
     const payload: JwtPayload = {
       sub: userId,

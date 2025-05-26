@@ -40,4 +40,6 @@ export const Symbols = {
   ClassesLoader: Symbol.for('ClassesLoader'),
   SessionsLoader: Symbol.for('SessionsLoader'),
   CoursesLoader: Symbol.for('CoursesLoader'),
+  CourseProfilesLoader: Symbol.for('CourseProfilesLoader'),
+  OrganizationRostersLoader: Symbol.for('OrganizationRostersLoader'),
 };

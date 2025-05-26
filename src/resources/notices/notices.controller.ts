@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  ParseIntPipe,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { NoticesService } from './notices.service';
 import { Symbols } from 'symbols';
 import { CreateNoticeValidator } from './notices.validator';
@@ -22,8 +31,8 @@ export class NoticesController {
   }
 
   @Get(':id')
-  public async getNoticeById() {
-    return '공지사항 상세 정보가 성공적으로 조회되었습니다.';
+  public async getNoticeById(@ReqUser() user: RequestUser, @Param('id', ParseIntPipe) id: number) {
+    await this._noticesService.getNoticeById({ user, id });
   }
 
   @Post()

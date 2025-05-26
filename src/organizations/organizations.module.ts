@@ -26,7 +26,15 @@ import { ProfilesModule } from 'src/users/profiles/profiles.module';
       provide: Symbols.OrganizationsLoader,
       useExisting: Symbols.OrganizationsService,
     },
+    {
+      provide: Symbols.OrganizationRostersLoader,
+      useExisting: Symbols.OrganizationsService,
+    },
   ],
-  exports: [Symbols.OrganizationOwnershipLoader, Symbols.OrganizationsLoader],
+  exports: [
+    Symbols.OrganizationOwnershipLoader,
+    Symbols.OrganizationsLoader,
+    Symbols.OrganizationRostersLoader,
+  ],
 })
 export class OrganizationsModule {}

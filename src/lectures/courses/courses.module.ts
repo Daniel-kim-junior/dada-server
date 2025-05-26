@@ -20,7 +20,11 @@ import { CoursesRepositoryDrizzle } from './courses.repository';
       provide: Symbols.CoursesRepository,
       useClass: CoursesRepositoryDrizzle, // Assuming CoursesService implements ICoursesRepository
     },
+    {
+      provide: Symbols.CourseProfilesLoader,
+      useExisting: Symbols.CoursesService,
+    },
   ],
-  exports: [Symbols.CoursesLoader],
+  exports: [Symbols.CoursesLoader, Symbols.CourseProfilesLoader],
 })
 export class CoursesModule {}

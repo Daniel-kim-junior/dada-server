@@ -4,9 +4,11 @@ import {
   AddProfileToRosterParam,
   CreateOrganizationParam,
   IOrganizationOwnershipLoader,
+  IOrganizationRostersLoader,
   IOrganizationsLoader,
   Organization,
   OrganizationOwnership,
+  OrganizationRoster,
 } from './organizations.types';
 import { IOrganizationsRepository } from './organizations.repository';
 import { Symbols } from 'symbols';
@@ -22,12 +24,26 @@ import { Nullable } from 'src/common.types';
 import { ORGANIZATION_OWNERSHIP_ROLES } from './constants';
 
 @Injectable()
-export class OrganiztionsService implements IOrganizationOwnershipLoader, IOrganizationsLoader {
+export class OrganiztionsService
+  implements IOrganizationOwnershipLoader, IOrganizationsLoader, IOrganizationRostersLoader
+{
   public constructor(
     @Inject(Symbols.OrganizationsRepository)
     private readonly _organizationRepo: IOrganizationsRepository,
     @Inject(Symbols.ProfilesLoader) private readonly _profileLoader: IProfilesLoader
   ) {}
+  public getOrganizationRosterByProfileIdAndOrganizationId({
+    profileId,
+    organizationId,
+  }: {
+    profileId: string;
+    organizationId: number;
+  }): Promise<Nullable<OrganizationRoster>> {
+    return this._organizationRepo.findRosterByProfileIdAndOrganizationId({
+      profileId,
+      organizationId,
+    });
+  }
 
   public async getOrganizationById(id: number): Promise<Nullable<Organization>> {
     return await this._organizationRepo.findOrganizationById(id);

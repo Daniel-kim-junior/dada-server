@@ -1,0 +1,5 @@
+export const COURSE_PROFILE_STATUS = {
+  APPROVED: 'APPROVED',
+  PENDING: 'PENDING',
+  REJECTED: 'REJECTED',
+} as const;
