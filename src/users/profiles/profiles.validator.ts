@@ -1,7 +1,11 @@
 import { IsDefined, IsIn, IsString, IsUUID, Length, ValidateIf } from 'class-validator';
-import { ProfileRole } from './profiles.types';
+import { ProfileConnectionStatus, ProfileRole } from './profiles.types';
 import { isNullish } from 'remeda';
-import { PROFILE_ROLES } from './profiles.constant';
+import {
+  PROFILE_CONNECTION_STATUS,
+  PROFILE_CONNECTION_STATUS_LIST,
+  PROFILE_ROLES,
+} from './profiles.constant';
 
 export class CreateProfileValidator {
   @IsDefined()
@@ -28,4 +32,10 @@ export class CreateProfileConnectionValidator {
   @ValidateIf((o) => !isNullish(o.message))
   @Length(0, 500)
   public message: string;
+}
+
+export class UpdateProfileConnectionValidator {
+  @IsDefined()
+  @IsIn(PROFILE_CONNECTION_STATUS_LIST)
+  public status: ProfileConnectionStatus;
 }

@@ -1,0 +1,2 @@
+CREATE INDEX `idx_profile_connections_requester_profile_id` ON `profile_connections` (`requester_profile_id`);--> statement-breakpoint
+CREATE INDEX `idx_profile_connections_target_profile_id` ON `profile_connections` (`target_profile_id`);
