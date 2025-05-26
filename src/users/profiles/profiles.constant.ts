@@ -1,1 +1,7 @@
-export const PROFILE_CONFIRM_ROLES = ['STUDENT', 'TEACHER'] as const;
+export const PROFILE_CONFIRM_ROLES = ['STUDENT', 'PARENTS'] as const;
+export const PROFILE_CONNECTION_STATUS = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  REJECTED: 'REJECTED',
+} as const;
+export const PROFILE_ROLES = ['STUDENT', 'PARENTS', 'INSTRUCTOR', 'ADMIN'];
