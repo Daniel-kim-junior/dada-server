@@ -12,6 +12,7 @@ export type Course = {
 
 export type ICoursesLoader = {
   getCourseById(id: number): Promise<Course>;
+  getLecturesByCourseId(courseId: number): Promise<LectureAggregateWithoutCourseProfile>;
 };
 
 /**
@@ -31,5 +32,7 @@ export type LectureAggregate = {
     status: string;
   };
 };
+
+export type LectureAggregateWithoutCourseProfile = Omit<LectureAggregate, 'course_profiles'>;
 
 export type CourseProfileStatus = keyof typeof COURSE_PROFILE_STATUS;

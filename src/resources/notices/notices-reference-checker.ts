@@ -42,18 +42,17 @@ export class NoticesReferenceChecker {
      * 내가 조직에 속해 있거나 조직의 강사나 관리자라면
      * 조직 공지사항을 조회할 수 있습니다
      */
-
+    const ownership =
+      await this._organizationOwnershipLoader.findOwnershipByProfileIdAndOrganizationId({
+        profileId: profile.id,
+        organizationId: id,
+      });
     if (type === NOTICE_TYPE.ORGANIZATION) {
-      const [ownership, organizationRosters] = await Promise.all([
-        this._organizationOwnershipLoader.findOwnershipByProfileIdAndOrganizationId({
+      const organizationRosters =
+        await this._organizationRostersLoader.getOrganizationRosterByProfileIdAndOrganizationId({
           profileId: profile.id,
           organizationId: id,
-        }),
-        this._organizationRostersLoader.getOrganizationRosterByProfileIdAndOrganizationId({
-          profileId: profile.id,
-          organizationId: id,
-        }),
-      ]);
+        });
 
       return isNonNullish(ownership) || isNonNullish(organizationRosters);
     }
@@ -68,9 +67,16 @@ export class NoticesReferenceChecker {
     if (type === NOTICE_TYPE.CLASS) {
       /**
        * 수업 공지사항의 경우
-       * 수업을 참여하고 있다면
+       * 수업을 참여하고 있거나
+       * 수업을 소유하고 있는 조직의 강사나 관리자라면
        */
-      return lectureAggregate.some((e) => e.classes.id === id);
+      const foundClass = await this._classesLoader.getClassById(id);
+      if (isNullish(foundClass)) {
+        return false;
+      }
+      const isAdmin =
+        isNonNullish(ownership) && ownership.organizationId === foundClass.organizationId;
+      return lectureAggregate.some((e) => e.classes.id === id) || isAdmin;
     }
 
     if (type === NOTICE_TYPE.SESSION) {
@@ -78,7 +84,13 @@ export class NoticesReferenceChecker {
        * 회차 공지사항
        * 내가 해당 회차에 속해 있다면
        */
-      return lectureAggregate.some((e) => e.sessions.id === id);
+      const session = await this._sessionsLoader.getSessionAndClassById(id);
+      if (isNullish(session)) {
+        return false;
+      }
+      const isAdmin =
+        isNonNullish(ownership) && ownership.organizationId === session.classes.organizationId;
+      return lectureAggregate.some((e) => e.sessions.id === id) || isAdmin;
     }
 
     if (type === NOTICE_TYPE.COURSE) {
@@ -86,7 +98,13 @@ export class NoticesReferenceChecker {
        * 분반 공지사항
        * 내가 해당 분반에 속해 있다면
        */
-      return lectureAggregate.some((e) => e.courses.id === id);
+      const lectureById = await this._coursesLoader.getLecturesByCourseId(id);
+      if (isNullish(lectureById)) {
+        return false;
+      }
+      const isAdmin =
+        isNonNullish(ownership) && ownership.organizationId === lectureById.classes.organizationId;
+      return lectureAggregate.some((e) => e.courses.id === id) || isAdmin;
     }
 
     throw new Error(

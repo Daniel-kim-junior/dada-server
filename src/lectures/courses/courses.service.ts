@@ -1,5 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Course, ICoursesLoader, ICourseProfilesLoader, LectureAggregate } from './courses.types';
+import {
+  Course,
+  ICoursesLoader,
+  ICourseProfilesLoader,
+  LectureAggregate,
+  LectureAggregateWithoutCourseProfile,
+} from './courses.types';
 import { Symbols } from 'symbols';
 import { ICoursesRepository } from './courses.repository';
 
@@ -8,6 +14,11 @@ export class CoursesService implements ICoursesLoader, ICourseProfilesLoader {
   public constructor(
     @Inject(Symbols.CoursesRepository) private readonly _coursesRepository: ICoursesRepository
   ) {}
+  public async getLecturesByCourseId(
+    courseId: number
+  ): Promise<LectureAggregateWithoutCourseProfile> {
+    return await this._coursesRepository.getLecturesByCourseId(courseId);
+  }
 
   public async getActiveLectureAggregateByProfileId(
     profileId: string
