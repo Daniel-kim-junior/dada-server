@@ -12,6 +12,7 @@ import { ISessionsLoader } from 'src/lectures/sessions/sessions.types';
 import { ICoursesLoader, ICourseProfilesLoader } from 'src/lectures/courses/courses.types';
 import { ProfilesEntity } from 'src/users/profiles/profiles.entity';
 import { isNonNullish, isNullish } from 'remeda';
+import { NoticesCachePermissionService } from './\bnotices-cache-permission.service';
 
 @Injectable()
 export class NoticesReferenceChecker {
@@ -26,7 +27,9 @@ export class NoticesReferenceChecker {
     @Inject(Symbols.SessionsLoader) private readonly _sessionsLoader: ISessionsLoader,
     @Inject(Symbols.CoursesLoader) private readonly _coursesLoader: ICoursesLoader,
     @Inject(Symbols.CourseProfilesLoader)
-    private readonly _courseProfilesLoader: ICourseProfilesLoader
+    private readonly _courseProfilesLoader: ICourseProfilesLoader,
+    @Inject(Symbols.NoticesCachePermissionService)
+    private readonly _noticesCachePermissionService: NoticesCachePermissionService
   ) {}
 
   public async isVisibleNotice({
@@ -38,16 +41,23 @@ export class NoticesReferenceChecker {
     id: number;
     profile: ProfilesEntity;
   }) {
+    const cachedPermissions = await this._noticesCachePermissionService.getCachedPermissions(
+      profile.id
+    );
+    if (cachedPermissions.some((p) => p.type === type && p.id === id && p.hasPermission)) {
+      return true;
+    }
     /**
      * 내가 조직에 속해 있거나 조직의 강사나 관리자라면
      * 조직 공지사항을 조회할 수 있습니다
      */
-    const ownership =
-      await this._organizationOwnershipLoader.findOwnershipByProfileIdAndOrganizationId({
-        profileId: profile.id,
-        organizationId: id,
-      });
+
     if (type === NOTICE_TYPE.ORGANIZATION) {
+      const ownership =
+        await this._organizationOwnershipLoader.findOwnershipByProfileIdAndOrganizationId({
+          profileId: profile.id,
+          organizationId: id,
+        });
       const organizationRosters =
         await this._organizationRostersLoader.getOrganizationRosterByProfileIdAndOrganizationId({
           profileId: profile.id,
@@ -74,8 +84,10 @@ export class NoticesReferenceChecker {
       if (isNullish(foundClass)) {
         return false;
       }
-      const isAdmin =
-        isNonNullish(ownership) && ownership.organizationId === foundClass.organizationId;
+      const ownerships = await this._organizationOwnershipLoader.getOwnershipByProfile(profile.id);
+      const isAdmin = ownerships.some(
+        (ownership) => ownership.organizationId === foundClass.organizationId
+      );
       return lectureAggregate.some((e) => e.classes.id === id) || isAdmin;
     }
 
@@ -88,8 +100,10 @@ export class NoticesReferenceChecker {
       if (isNullish(session)) {
         return false;
       }
-      const isAdmin =
-        isNonNullish(ownership) && ownership.organizationId === session.classes.organizationId;
+      const ownerships = await this._organizationOwnershipLoader.getOwnershipByProfile(profile.id);
+      const isAdmin = ownerships.some(
+        (ownership) => ownership.organizationId === session.classes.organizationId
+      );
       return lectureAggregate.some((e) => e.sessions.id === id) || isAdmin;
     }
 
@@ -102,8 +116,10 @@ export class NoticesReferenceChecker {
       if (isNullish(lectureById)) {
         return false;
       }
-      const isAdmin =
-        isNonNullish(ownership) && ownership.organizationId === lectureById.classes.organizationId;
+      const ownerships = await this._organizationOwnershipLoader.getOwnershipByProfile(profile.id);
+      const isAdmin = ownerships.some(
+        (ownership) => ownership.organizationId === lectureById.classes.organizationId
+      );
       return lectureAggregate.some((e) => e.courses.id === id) || isAdmin;
     }
 

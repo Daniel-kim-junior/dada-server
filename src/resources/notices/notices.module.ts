@@ -9,6 +9,7 @@ import { SessionsModule } from 'src/lectures/sessions/sessions.module';
 import { ClassesModule } from 'src/lectures/classes/classes.module';
 import { CoursesModule } from 'src/lectures/courses/courses.module';
 import { NoticesReferenceChecker } from './notices-reference-checker';
+import { NoticesCachePermissionService } from './\bnotices-cache-permission.service';
 
 @Module({
   imports: [ProfilesModule, OrganizationsModule, ClassesModule, SessionsModule, CoursesModule],
@@ -22,8 +23,12 @@ import { NoticesReferenceChecker } from './notices-reference-checker';
       provide: Symbols.NoticeRepository,
       useClass: NoticesRepositoryDrizzle,
     },
+    {
+      provide: Symbols.NoticesCachePermissionService,
+      useClass: NoticesCachePermissionService,
+    },
     NoticesReferenceChecker,
   ],
-  exports: [],
+  exports: [Symbols.NoticesCachePermissionService],
 })
 export class NoticesModule {}

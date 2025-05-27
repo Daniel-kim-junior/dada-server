@@ -13,6 +13,10 @@ import { isNullish } from 'remeda';
 import { UnAuthorizedError } from 'src/errors/errors';
 import * as bcrypt from 'bcrypt';
 import { IProfilesLoader } from 'src/users/profiles/profiles.types';
+import {
+  INotciesCachePermissionService,
+  NoticesCachePermissionService,
+} from 'src/resources/notices/\bnotices-cache-permission.service';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +24,9 @@ export class AuthService {
   constructor(
     @Inject(JwtService) private readonly _jwtService: JwtService,
     @Inject(Symbols.ProfilesLoader) private readonly _profileLoader: IProfilesLoader,
-    @Inject(Symbols.AuthRepository) private readonly _authRepo: IAuthRepository
+    @Inject(Symbols.AuthRepository) private readonly _authRepo: IAuthRepository,
+    @Inject(Symbols.NoticesCachePermissionService)
+    private readonly _noticesCachePermissionService: INotciesCachePermissionService
   ) {}
 
   public async signIn(param: UserSignInParam): Promise<SignInResponse> {
@@ -60,9 +66,7 @@ export class AuthService {
       throw new UnAuthorizedError('존재하지 않는 프로필입니다');
     }
 
-    /**
-     * redis에 프로필 권한을 캐싱한다 (일단 공지사항 조회 권한)
-     */
+    this._noticesCachePermissionService.preloadUserPermissions(profileId);
 
     // JWT 토큰 생성
     const payload: JwtPayload = {

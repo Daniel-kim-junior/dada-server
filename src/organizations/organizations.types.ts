@@ -68,8 +68,11 @@ export type IOrganizationRostersLoader = {
     organizationId,
   }: {
     profileId: string;
-    organizationId: number;
+    organizationId?: number;
   }): Promise<Nullable<OrganizationRoster>>;
+  getOrganizationRostersByProfileId(
+    profileId: string
+  ): Promise<OrganizationRosterWithOrganization[]>;
 };
 
 export type IOrganizationOwnershipLoader = {
@@ -78,8 +81,9 @@ export type IOrganizationOwnershipLoader = {
     organizationId,
   }: {
     profileId: string;
-    organizationId: number;
+    organizationId?: number;
   }): Promise<Nullable<OrganizationOwnership>>;
+  getOwnershipByProfile(profileId: string): Promise<OrganizationOwnership[]>;
 };
 
 export type OrganizationRole = keyof typeof ORGANIZATION_OWNERSHIP_ROLES;

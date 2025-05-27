@@ -18,6 +18,7 @@ export const Symbols = {
   ClassesService: Symbol.for('ClassesService'),
   SessionsService: Symbol.for('SessionsService'),
   CoursesService: Symbol.for('CoursesService'),
+  NoticesCachePermissionService: Symbol.for('NoticesCachePermissionService'),
 
   /**
    * Repositories
@@ -42,4 +43,5 @@ export const Symbols = {
   CoursesLoader: Symbol.for('CoursesLoader'),
   CourseProfilesLoader: Symbol.for('CourseProfilesLoader'),
   OrganizationRostersLoader: Symbol.for('OrganizationRostersLoader'),
+  RedisProvider: Symbol.for('RedisProvider'),
 };

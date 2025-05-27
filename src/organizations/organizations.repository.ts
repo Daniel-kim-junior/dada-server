@@ -52,11 +52,34 @@ export type IOrganizationsRepository = {
     organizationId: number;
   }): Promise<Nullable<OrganizationRoster>>;
   findRostersByProfileId(profileId: string): Promise<OrganizationRosterWithOrganization[]>;
+  findOwnershipsByProfileId(profileId: string): Promise<OrganizationOwnership[]>; // Assuming this method is needed
 };
 
 @Injectable()
 export class OrganizationsRepositoryDrizzle implements IOrganizationsRepository {
   public constructor(@Inject(Symbols.Database) private readonly _db: Database) {}
+
+  public async findOwnershipsByProfileId(profileId: string): Promise<OrganizationOwnership[]> {
+    return this._db
+      .select()
+      .from(OrganizationOwnerships)
+      .where(eq(OrganizationOwnerships.profileId, profileId));
+  }
+  public async findRostersByProfileId(
+    profileId: string
+  ): Promise<OrganizationRosterWithOrganization[]> {
+    return this._db
+      .select({
+        organizationName: Organizations.name,
+        organizationId: Organizations.id,
+        organizationLogo: Organizations.logo,
+        organizationDescription: Organizations.description,
+      })
+      .from(OrganizationRosters)
+      .innerJoin(Organizations, eq(Organizations.id, OrganizationRosters.organizationId))
+      .where(eq(OrganizationRosters.profileId, profileId));
+  }
+
   public async createOrganizationOwnership({
     organizationId,
     addProfileId,
@@ -89,21 +112,6 @@ export class OrganizationsRepositoryDrizzle implements IOrganizationsRepository 
   }
   public async findAllOrganizations(): Promise<Organization[]> {
     return await this._db.select().from(Organizations);
-  }
-
-  public async findRostersByProfileId(
-    profileId: string
-  ): Promise<OrganizationRosterWithOrganization[]> {
-    return this._db
-      .select({
-        organizationName: Organizations.name,
-        organizationId: Organizations.id,
-        organizationLogo: Organizations.logo,
-        organizationDescription: Organizations.description,
-      })
-      .from(OrganizationRosters)
-      .innerJoin(Organizations, eq(Organizations.id, OrganizationRosters.organizationId))
-      .where(eq(OrganizationRosters.profileId, profileId));
   }
 
   public async findRosterByProfileIdAndOrganizationId({
