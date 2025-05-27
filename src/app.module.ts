@@ -10,7 +10,6 @@ import { AppController } from './app.controller';
 import { mysqlConfig } from '../mysql.config';
 import { UsersModule } from './users/users.module';
 import { DatabaseModule } from './databases/databases.module';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RedisModule } from './redis/redis.module';
 
 @Module({
@@ -29,12 +28,6 @@ import { RedisModule } from './redis/redis.module';
     RedisModule,
     ResourcesModule,
     DatabaseModule,
-    EventEmitterModule.forRoot({
-      // 전역으로 사용
-      global: true,
-      // 이벤트 핸들러에서 예외 발생 시 처리
-      ignoreErrors: false,
-    }),
   ],
   providers: [AppService],
   controllers: [AppController],
