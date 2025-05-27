@@ -28,11 +28,7 @@ export class NoticesController {
     @ReqUser() user: RequestUser,
     @Query() query: LongPollingNoticeQueryValidator
   ) {
-    /**
-     * long polling 예정
-     */
-    await this._noticesService.getNotices({ ...user, ...query });
-    return '공지사항 목록이 성공적으로 조회되었습니다.';
+    return await this._noticesService.getNotices({ ...user, ...query });
   }
 
   @Get(':id')
