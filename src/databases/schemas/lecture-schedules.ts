@@ -24,7 +24,7 @@ export const LectureSchedules = mysqlTable(
   },
   (table) => ({
     pk: primaryKey({ columns: [table.scheduleId, table.type] }),
-    idxClasssroomId: index('idx_classroom_id').on(table.classroomId),
+    idxClassroomId: index('idx_classroom_id').on(table.classroomId),
     idxInstructorProfileId: index('idx_instructor_profile_id').on(table.instructorProfileId),
   })
 );

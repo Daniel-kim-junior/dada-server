@@ -47,17 +47,19 @@ export class ClassesRepositoryDrizzle implements IClassesRepository {
           description,
         })
         .$returningId();
-      schedules.forEach(async (schedule) => {
-        const { startTime, endTime, instructorProfileId, classroomId } = schedule;
-        await tx.insert(LectureSchedules).values({
-          startTime,
-          endTime,
-          scheduleId: classes.id,
-          type: SCHEDULE_TYPE.CLASS,
-          instructorProfileId,
-          classroomId,
-        });
-      });
+      await Promise.all(
+        schedules.map(async (schedule) => {
+          const { startTime, endTime, instructorProfileId, classroomId } = schedule;
+          await tx.insert(LectureSchedules).values({
+            startTime,
+            endTime,
+            scheduleId: classes.id,
+            type: SCHEDULE_TYPE.CLASS,
+            instructorProfileId,
+            classroomId,
+          });
+        })
+      );
     });
   }
 }

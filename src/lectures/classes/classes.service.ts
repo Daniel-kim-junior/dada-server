@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Class, ClassDetailResponse, CreateClassParam, IClassesLoader } from './classes.types';
 import { Symbols } from 'symbols';
 import { isEmpty, isNullish } from 'remeda';
-import { UnAuthorizedError } from 'src/errors/errors';
+import { NotFoundError, UnAuthorizedError } from 'src/errors/errors';
 import { IOrganizationOwnershipLoader } from 'src/organizations/organizations.types';
 import { IClassesRepository } from './classes.repository';
 import { RequestUser } from 'src/auth/auth.types';
@@ -30,7 +30,7 @@ export class ClassesService implements IClassesLoader {
 
     const classDetail = await this._classesRepo.getClassDetailById(classId);
     if (isEmpty(classDetail)) {
-      throw new UnAuthorizedError('존재하지 않는 클래스입니다.');
+      throw new NotFoundError('존재하지 않는 수업입니다.');
     }
     const { id, name, description, openDate, closeDate } = classDetail[0].classes;
 
