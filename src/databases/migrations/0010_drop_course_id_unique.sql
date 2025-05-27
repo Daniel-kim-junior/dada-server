@@ -1,1 +1,0 @@
-DROP INDEX `course_id` ON `course_profiles`;

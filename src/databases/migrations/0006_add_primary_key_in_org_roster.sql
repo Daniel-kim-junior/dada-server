@@ -1,2 +1,0 @@
-ALTER TABLE `organizations_roster` 
-ADD `id` INT AUTO_INCREMENT PRIMARY KEY FIRST;

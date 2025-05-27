@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "2f05f211-c3df-412e-8f5d-5d755766db75",
+  "id": "9c9bd6bc-2a82-416f-ac6c-fc339980c20d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "auth": {
@@ -104,6 +104,20 @@
           "notNull": false,
           "autoincrement": false
         },
+        "open_date": {
+          "name": "open_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "close_date": {
+          "name": "close_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -136,96 +150,6 @@
           "name": "classes_id",
           "columns": [
             "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "classroom_schedules": {
-      "name": "classroom_schedules",
-      "columns": {
-        "schedule_id": {
-          "name": "schedule_id",
-          "type": "serial",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "type": {
-          "name": "type",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "classroom_id": {
-          "name": "classroom_id",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "instructor_profile_id": {
-          "name": "instructor_profile_id",
-          "type": "varchar(36)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "start_time": {
-          "name": "start_time",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "end_time": {
-          "name": "end_time",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "(now())"
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "onUpdate": true,
-          "default": "(now())"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "classroom_schedules_schedule_id": {
-          "name": "classroom_schedules_schedule_id",
-          "columns": [
-            "schedule_id"
-          ]
-        },
-        "classroom_schedules_schedule_id_type_pk": {
-          "name": "classroom_schedules_schedule_id_type_pk",
-          "columns": [
-            "schedule_id",
-            "type"
           ]
         }
       },
@@ -304,12 +228,19 @@
     "course_profiles": {
       "name": "course_profiles",
       "columns": {
-        "course_id": {
-          "name": "course_id",
+        "id": {
+          "name": "id",
           "type": "serial",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": true
+        },
+        "course_id": {
+          "name": "course_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
         },
         "student_profile_id": {
           "name": "student_profile_id",
@@ -350,9 +281,32 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "course_id_idx": {
+          "name": "course_id_idx",
+          "columns": [
+            "course_id"
+          ],
+          "isUnique": false
+        },
+        "student_profile_id_and_status_idx": {
+          "name": "student_profile_id_and_status_idx",
+          "columns": [
+            "student_profile_id",
+            "status"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "course_profiles_id": {
+          "name": "course_profiles_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
@@ -412,7 +366,15 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "session_id_idx": {
+          "name": "session_id_idx",
+          "columns": [
+            "session_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "courses_id": {
@@ -546,6 +508,20 @@
           "notNull": true,
           "autoincrement": false
         },
+        "description": {
+          "name": "description",
+          "type": "varchar(1000)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "logo": {
+          "name": "logo",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -589,10 +565,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "notice_id": {
           "name": "notice_id",
@@ -675,7 +651,7 @@
           "name": "content",
           "type": "varchar(5000)",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "created_at": {
@@ -772,7 +748,16 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "profile_org_unique": {
+          "name": "profile_org_unique",
+          "columns": [
+            "profile_id",
+            "organization_id"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "organization_ownerships_id": {
@@ -788,6 +773,13 @@
     "organizations_roster": {
       "name": "organizations_roster",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
         "profile_id": {
           "name": "profile_id",
           "type": "varchar(36)",
@@ -801,11 +793,34 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "invite_profile_id": {
+          "name": "invite_profile_id",
+          "type": "varchar(36)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "profile_org_roster_unique": {
+          "name": "profile_org_roster_unique",
+          "columns": [
+            "profile_id",
+            "organization_id"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "organizations_roster_id": {
+          "name": "organizations_roster_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
@@ -872,7 +887,22 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "idx_profile_connections_requester_profile_id": {
+          "name": "idx_profile_connections_requester_profile_id",
+          "columns": [
+            "requester_profile_id"
+          ],
+          "isUnique": false
+        },
+        "idx_profile_connections_target_profile_id": {
+          "name": "idx_profile_connections_target_profile_id",
+          "columns": [
+            "target_profile_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "profile_connections_id": {
@@ -1017,13 +1047,120 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "class_id_idx": {
+          "name": "class_id_idx",
+          "columns": [
+            "class_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "sessions_id": {
           "name": "sessions_id",
           "columns": [
             "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "lecture_schedules": {
+      "name": "lecture_schedules",
+      "columns": {
+        "schedule_id": {
+          "name": "schedule_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "classroom_id": {
+          "name": "classroom_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "instructor_profile_id": {
+          "name": "instructor_profile_id",
+          "type": "varchar(36)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "start_time": {
+          "name": "start_time",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "end_time": {
+          "name": "end_time",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "onUpdate": true,
+          "default": "(now())"
+        }
+      },
+      "indexes": {
+        "idx_classroom_id": {
+          "name": "idx_classroom_id",
+          "columns": [
+            "classroom_id"
+          ],
+          "isUnique": false
+        },
+        "idx_instructor_profile_id": {
+          "name": "idx_instructor_profile_id",
+          "columns": [
+            "instructor_profile_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "lecture_schedules_schedule_id_type_pk": {
+          "name": "lecture_schedules_schedule_id_type_pk",
+          "columns": [
+            "schedule_id",
+            "type"
           ]
         }
       },

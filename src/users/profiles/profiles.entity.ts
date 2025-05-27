@@ -1,4 +1,4 @@
-import { ProfileRole, Profiles } from './profiles.types';
+import { ProfileRole, Profile } from './profiles.types';
 import { PROFILE_ROLES } from './profiles.constant';
 
 export class ProfilesEntity {
@@ -12,7 +12,7 @@ export class ProfilesEntity {
   private _introduction: string;
   private _role: ProfileRole;
 
-  public static of(profile: Profiles): ProfilesEntity {
+  public static of(profile: Profile): ProfilesEntity {
     const entity = new ProfilesEntity();
     entity._role = profile.role;
     entity._createdAt = profile.createdAt;
@@ -28,7 +28,7 @@ export class ProfilesEntity {
     return entity;
   }
 
-  public toResponse(): Partial<Profiles> {
+  public toResponse(): Partial<Profile> {
     return {
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
