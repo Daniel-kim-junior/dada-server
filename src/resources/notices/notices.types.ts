@@ -1,5 +1,5 @@
 import { RequestUser } from 'src/auth/auth.types';
-import { CreateNoticeValidator } from './notices.validator';
+import { CreateNoticeValidator, LongPollingNoticeQueryValidator } from './notices.validator';
 import { Nullable } from 'src/common.types';
 
 export type CreateNoticeParam = InstanceType<typeof CreateNoticeValidator> & RequestUser;
@@ -13,3 +13,6 @@ export type NoticeAggregate = {
   type: string;
   referenceId: number;
 };
+
+export type LongPollingNoticeQueryParam = InstanceType<typeof LongPollingNoticeQueryValidator> &
+  RequestUser;

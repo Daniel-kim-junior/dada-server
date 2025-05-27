@@ -1,24 +1,19 @@
 import { Controller, Get, Inject } from '@nestjs/common';
-import { Database } from './databases/databases.module';
-import { sql } from 'drizzle-orm';
 import { Symbols } from 'symbols';
+import Redis from 'ioredis';
 
 @Controller('app')
 export class AppController {
-  public constructor(@Inject(Symbols.Database) private readonly _db: Database) {}
+  public constructor(@Inject(Symbols.RedisProvider) private readonly _redis: Redis) {}
   @Get()
   public async healthCheck(): Promise<void> {
+    // Redis 연결 상태를 확인합니다.
     try {
-      const result = await this._db.execute(sql`SELECT 1 as test`);
-      console.log('✅ MySQL 연결 성공:', result);
-
-      // 추가 정보
-      const dbInfo = await this._db.execute(
-        sql`SELECT DATABASE() as current_db, VERSION() as version`
-      );
-      console.log('데이터베이스 정보:', dbInfo[0]);
+      await this._redis.ping();
+      console.log('Redis is connected');
     } catch (error) {
-      console.error('❌ MySQL 연결 실패:', error.message);
+      console.error('Redis connection error:', error);
+      throw new Error('Redis connection failed');
     }
   }
 }

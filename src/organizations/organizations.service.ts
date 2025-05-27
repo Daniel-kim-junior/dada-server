@@ -9,6 +9,7 @@ import {
   Organization,
   OrganizationOwnership,
   OrganizationRoster,
+  OrganizationRosterWithOrganization,
 } from './organizations.types';
 import { IOrganizationsRepository } from './organizations.repository';
 import { Symbols } from 'symbols';
@@ -32,6 +33,15 @@ export class OrganiztionsService
     private readonly _organizationRepo: IOrganizationsRepository,
     @Inject(Symbols.ProfilesLoader) private readonly _profileLoader: IProfilesLoader
   ) {}
+  public async getOrganizationRostersByProfileId(
+    profileId: string
+  ): Promise<OrganizationRosterWithOrganization[]> {
+    return await this._organizationRepo.findRostersByProfileId(profileId);
+  }
+
+  public async getOwnershipByProfile(profileId: string): Promise<OrganizationOwnership[]> {
+    return await this._organizationRepo.findOwnershipsByProfileId(profileId);
+  }
   public getOrganizationRosterByProfileIdAndOrganizationId({
     profileId,
     organizationId,

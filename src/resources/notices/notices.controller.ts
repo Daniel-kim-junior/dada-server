@@ -6,11 +6,12 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { NoticesService } from './notices.service';
 import { Symbols } from 'symbols';
-import { CreateNoticeValidator } from './notices.validator';
+import { CreateNoticeValidator, LongPollingNoticeQueryValidator } from './notices.validator';
 import { ReqUser } from 'src/decorator/request-user.decorator';
 import { RequestUser } from 'src/auth/auth.types';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -22,12 +23,12 @@ export class NoticesController {
     @Inject(Symbols.NoticesService) private readonly _noticesService: NoticesService
   ) {}
 
-  @Get()
-  public async getNotices() {
-    /**
-     * long polling 예정
-     */
-    return '공지사항 목록이 성공적으로 조회되었습니다.';
+  @Get('/long-polling')
+  public async getNotices(
+    @ReqUser() user: RequestUser,
+    @Query() query: LongPollingNoticeQueryValidator
+  ) {
+    return await this._noticesService.getNotices({ ...user, ...query });
   }
 
   @Get(':id')

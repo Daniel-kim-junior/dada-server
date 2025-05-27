@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { INoticeRepository } from './notices.repository';
 import { Symbols } from 'symbols';
-import { CreateNoticeParam } from './notices.types';
-import { isNullish } from 'remeda';
+import { CreateNoticeParam, LongPollingNoticeQueryParam } from './notices.types';
+import { isEmpty, isNullish } from 'remeda';
 import { NotFoundError, UnAuthorizedError } from 'src/errors/errors';
 import { IProfilesLoader } from 'src/users/profiles/profiles.types';
 import { NoticesReferenceChecker } from './notices-reference-checker';
@@ -16,6 +16,53 @@ export class NoticesService {
     @Inject(NoticesReferenceChecker)
     private readonly _noticesReferenceChecker: NoticesReferenceChecker
   ) {}
+
+  public async getNotices(param: LongPollingNoticeQueryParam) {
+    const {
+      profileId: requestProfileId,
+      lastNoticeId,
+      referenceId,
+      limit = 20,
+      timeout = 20,
+      type,
+    } = param;
+    if (isNullish(requestProfileId)) {
+      throw new UnAuthorizedError('프로필이 선택되지 않았습니다. 프로필을 선택해주세요.');
+    }
+    const requestProfile = await this._profileLoader.getProfileById(requestProfileId);
+    if (isNullish(requestProfile)) {
+      throw new UnAuthorizedError('존재하지 않는 프로필입니다.');
+    }
+    const isVisible = await this._noticesReferenceChecker.isVisibleNotice({
+      type,
+      id: referenceId,
+      profile: requestProfile,
+    });
+    if (!isVisible) {
+      throw new UnAuthorizedError('해당 공지사항을 조회할 권한이 없습니다.');
+    }
+    const maxTimeout = Math.min(timeout, 60) * 1000;
+    const startTime = Date.now();
+    const pollInterval = 2000;
+    while (Date.now() - startTime < maxTimeout) {
+      const notices = await this._noticesRepo.getNewNotices({
+        lastNoticeId,
+        referenceId,
+        limit,
+        type,
+      });
+      if (!isEmpty(notices)) {
+        return {
+          notices: notices.map((notice) => notice.toResponse()),
+        };
+      }
+      await new Promise((resolve) => setTimeout(resolve, pollInterval));
+    }
+
+    return {
+      notices: [],
+    };
+  }
 
   public async getNoticeById(param: { id: number; user: RequestUser }) {
     const { user, id } = param;
