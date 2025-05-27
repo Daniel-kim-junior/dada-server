@@ -14,23 +14,12 @@ CREATE TABLE `classes` (
 	`organization_id` bigint NOT NULL,
 	`name` varchar(100) NOT NULL,
 	`description` varchar(500),
+	`open_date` timestamp NOT NULL,
+	`close_date` timestamp NOT NULL,
 	`created_at` timestamp DEFAULT (now()),
 	`deleted_at` timestamp,
 	`updated_at` timestamp DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `classes_id` PRIMARY KEY(`id`)
-);
---> statement-breakpoint
-CREATE TABLE `classroom_schedules` (
-	`schedule_id` serial AUTO_INCREMENT NOT NULL,
-	`type` varchar(50) NOT NULL,
-	`classroom_id` bigint NOT NULL,
-	`instructor_profile_id` varchar(36) NOT NULL,
-	`start_time` timestamp NOT NULL,
-	`end_time` timestamp NOT NULL,
-	`created_at` timestamp DEFAULT (now()),
-	`deleted_at` timestamp,
-	`updated_at` timestamp DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
-	CONSTRAINT `classroom_schedules_schedule_id` PRIMARY KEY(`schedule_id`)
 );
 --> statement-breakpoint
 CREATE TABLE `classrooms` (
@@ -45,12 +34,14 @@ CREATE TABLE `classrooms` (
 );
 --> statement-breakpoint
 CREATE TABLE `course_profiles` (
-	`course_id` serial AUTO_INCREMENT NOT NULL,
+	`id` serial AUTO_INCREMENT NOT NULL,
+	`course_id` bigint NOT NULL,
 	`student_profile_id` varchar(36) NOT NULL,
 	`status` varchar(50) NOT NULL,
 	`created_at` timestamp DEFAULT (now()),
 	`deleted_at` timestamp,
-	`updated_at` timestamp DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP
+	`updated_at` timestamp DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `course_profiles_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
 CREATE TABLE `courses` (
@@ -83,6 +74,8 @@ CREATE TABLE `users` (
 CREATE TABLE `organizations` (
 	`id` serial AUTO_INCREMENT NOT NULL,
 	`name` varchar(255) NOT NULL,
+	`description` varchar(1000),
+	`logo` varchar(255),
 	`created_at` timestamp DEFAULT (now()),
 	`deleted_at` timestamp,
 	`updated_at` timestamp DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
@@ -90,7 +83,7 @@ CREATE TABLE `organizations` (
 );
 --> statement-breakpoint
 CREATE TABLE `notice_ownerships` (
-	`id` serial AUTO_INCREMENT NOT NULL,
+	`id` bigint NOT NULL,
 	`notice_id` bigint NOT NULL,
 	`type` varchar(50) NOT NULL,
 	`register_profile_id` varchar(36) NOT NULL,
@@ -103,7 +96,7 @@ CREATE TABLE `notice_ownerships` (
 CREATE TABLE `notices` (
 	`id` serial AUTO_INCREMENT NOT NULL,
 	`title` varchar(255) NOT NULL,
-	`content` varchar(5000) NOT NULL,
+	`content` varchar(5000),
 	`created_at` timestamp DEFAULT (now()),
 	`deleted_at` timestamp,
 	`updated_at` timestamp DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
@@ -118,12 +111,17 @@ CREATE TABLE `organization_ownerships` (
 	`created_at` timestamp DEFAULT (now()),
 	`deleted_at` timestamp,
 	`updated_at` timestamp DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
-	CONSTRAINT `organization_ownerships_id` PRIMARY KEY(`id`)
+	CONSTRAINT `organization_ownerships_id` PRIMARY KEY(`id`),
+	CONSTRAINT `profile_org_unique` UNIQUE(`profile_id`,`organization_id`)
 );
 --> statement-breakpoint
 CREATE TABLE `organizations_roster` (
+	`id` serial AUTO_INCREMENT NOT NULL,
 	`profile_id` varchar(36) NOT NULL,
-	`organization_id` bigint NOT NULL
+	`organization_id` bigint NOT NULL,
+	`invite_profile_id` varchar(36) NOT NULL,
+	CONSTRAINT `organizations_roster_id` PRIMARY KEY(`id`),
+	CONSTRAINT `profile_org_roster_unique` UNIQUE(`profile_id`,`organization_id`)
 );
 --> statement-breakpoint
 CREATE TABLE `profile_connections` (
@@ -160,3 +158,25 @@ CREATE TABLE `sessions` (
 	`updated_at` timestamp DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `sessions_id` PRIMARY KEY(`id`)
 );
+--> statement-breakpoint
+CREATE TABLE `lecture_schedules` (
+	`schedule_id` bigint NOT NULL,
+	`type` varchar(50) NOT NULL,
+	`classroom_id` bigint,
+	`instructor_profile_id` varchar(36) NOT NULL,
+	`start_time` varchar(10) NOT NULL,
+	`end_time` varchar(10) NOT NULL,
+	`created_at` timestamp DEFAULT (now()),
+	`deleted_at` timestamp,
+	`updated_at` timestamp DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `lecture_schedules_schedule_id_type_pk` PRIMARY KEY(`schedule_id`,`type`)
+);
+--> statement-breakpoint
+CREATE INDEX `course_id_idx` ON `course_profiles` (`course_id`);--> statement-breakpoint
+CREATE INDEX `student_profile_id_and_status_idx` ON `course_profiles` (`student_profile_id`,`status`);--> statement-breakpoint
+CREATE INDEX `session_id_idx` ON `courses` (`session_id`);--> statement-breakpoint
+CREATE INDEX `idx_profile_connections_requester_profile_id` ON `profile_connections` (`requester_profile_id`);--> statement-breakpoint
+CREATE INDEX `idx_profile_connections_target_profile_id` ON `profile_connections` (`target_profile_id`);--> statement-breakpoint
+CREATE INDEX `class_id_idx` ON `sessions` (`class_id`);--> statement-breakpoint
+CREATE INDEX `idx_classroom_id` ON `lecture_schedules` (`classroom_id`);--> statement-breakpoint
+CREATE INDEX `idx_instructor_profile_id` ON `lecture_schedules` (`instructor_profile_id`);

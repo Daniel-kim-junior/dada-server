@@ -10,7 +10,7 @@ import {
 
 export type ProfileRole = (typeof PROFILE_ROLE_LIST)[number];
 export type ProfileConnectionStatus = keyof typeof PROFILE_CONNECTION_STATUS;
-export type Profiles = {
+export type Profile = {
   createdAt: Date;
   deletedAt: Date;
   updatedAt: Date;

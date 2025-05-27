@@ -1,15 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Class, CreateClassParam } from './classes.types';
+import { Class, ClassDetail, CreateClassParam } from './classes.types';
 import { Symbols } from 'symbols';
 import { Database } from 'src/databases/databases.module';
-import { Classes } from 'src/databases/schemas';
+import { Classes, Classrooms, LectureSchedules, Profiles } from 'src/databases/schemas';
 import { Nullable } from 'src/common.types';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { isEmpty } from 'remeda';
+import { SCHEDULE_TYPE } from './classes.constant';
 
 export interface IClassesRepository {
   createClass(param: CreateClassParam): Promise<void>;
   getClassById(id: number): Promise<Nullable<Class>>;
+  getClassDetailById(id: number): Promise<ClassDetail[]>;
 }
 
 @Injectable()
@@ -22,16 +24,40 @@ export class ClassesRepositoryDrizzle implements IClassesRepository {
     return isEmpty(found) ? null : found[0];
   }
 
-  public async createClass(param: CreateClassParam): Promise<void> {
-    const { organizationId, name, description } = param;
+  public async getClassDetailById(id: number): Promise<ClassDetail[]> {
+    return await this._db
+      .select()
+      .from(Classes)
+      .innerJoin(LectureSchedules, eq(LectureSchedules.scheduleId, Classes.id))
+      .innerJoin(Profiles, eq(LectureSchedules.instructorProfileId, Profiles.id))
+      .innerJoin(Classrooms, eq(LectureSchedules.classroomId, Classrooms.id))
+      .where(and(eq(Classes.id, id), eq(LectureSchedules.type, SCHEDULE_TYPE.CLASS)));
+  }
 
-    await this._db
-      .insert(Classes)
-      .values({
-        organizationId,
-        name,
-        description,
-      })
-      .execute();
+  public async createClass(param: CreateClassParam): Promise<void> {
+    const { organizationId, name, description, openDate, closeDate, schedules } = param;
+    await this._db.transaction(async (tx) => {
+      const [classes] = await tx
+        .insert(Classes)
+        .values({
+          organizationId,
+          name,
+          openDate,
+          closeDate,
+          description,
+        })
+        .$returningId();
+      schedules.forEach(async (schedule) => {
+        const { startTime, endTime, instructorProfileId, classroomId } = schedule;
+        await tx.insert(LectureSchedules).values({
+          startTime,
+          endTime,
+          scheduleId: classes.id,
+          type: SCHEDULE_TYPE.CLASS,
+          instructorProfileId,
+          classroomId,
+        });
+      });
+    });
   }
 }

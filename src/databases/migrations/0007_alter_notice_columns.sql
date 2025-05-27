@@ -1,1 +1,0 @@
-ALTER TABLE `notices` MODIFY COLUMN `content` varchar(5000) NULL;

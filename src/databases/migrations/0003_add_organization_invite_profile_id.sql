@@ -1,1 +1,0 @@
-ALTER TABLE `organizations_roster` ADD `invite_profile_id` varchar(36) NOT NULL;

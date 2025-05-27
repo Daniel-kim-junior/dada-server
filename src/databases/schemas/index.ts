@@ -12,4 +12,4 @@ export * from './profile-connections';
 export * from './profiles';
 export * from './sessions';
 export * from './auth';
-export * from './classroom-schedules';
+export * from './lecture-schedules';

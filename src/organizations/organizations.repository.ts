@@ -12,7 +12,6 @@ import {
 import { Inject, Injectable } from '@nestjs/common';
 import { Symbols } from 'symbols';
 import {
-  Classes,
   OrganizationOwnerships,
   OrganizationRosters,
   Organizations,

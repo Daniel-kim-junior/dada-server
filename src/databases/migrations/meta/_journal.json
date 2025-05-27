@@ -5,66 +5,9 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1748221499894,
-      "tag": "0000_init_migration_tables",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1748227340811,
-      "tag": "0001_profile_connections_table_idx",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1748232614615,
-      "tag": "0002_organizations_add_columns",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1748235535106,
-      "tag": "0003_add_organization_invite_profile_id",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1748236298598,
-      "tag": "0006_add_primary_key_in_org_roster",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1748236611556,
-      "tag": "0005_add_index_in_org_ownership_and_roster",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "5",
-      "when": 1748256994342,
-      "tag": "0007_alter_notice_columns",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "5",
-      "when": 1748267465339,
-      "tag": "0008_add_idx_and_alter_column_course_profile",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "5",
-      "when": 1748268169008,
-      "tag": "0010_drop_course_id_unique",
+      "when": 1748386317941,
+      "tag": "0000_initial_tables",
       "breakpoints": true
     }
-    
   ]
 }
