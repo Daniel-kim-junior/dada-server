@@ -52,7 +52,7 @@ export type IOrganizationsRepository = {
     organizationId: number;
   }): Promise<Nullable<OrganizationRoster>>;
   findRostersByProfileId(profileId: string): Promise<OrganizationRosterWithOrganization[]>;
-  findOwnershipsByProfileId(profileId: string): Promise<OrganizationOwnership[]>; // Assuming this method is needed
+  findOwnershipsByProfileId(profileId: string): Promise<OrganizationOwnership[]>;
 };
 
 @Injectable()
