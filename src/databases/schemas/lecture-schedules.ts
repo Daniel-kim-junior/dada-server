@@ -1,12 +1,4 @@
-import {
-  bigint,
-  index,
-  mysqlTable,
-  primaryKey,
-  serial,
-  timestamp,
-  varchar,
-} from 'drizzle-orm/mysql-core';
+import { bigint, index, mysqlTable, primaryKey, varchar } from 'drizzle-orm/mysql-core';
 import { DateColumns } from './date-columns';
 /**
  * 강의 스케줄

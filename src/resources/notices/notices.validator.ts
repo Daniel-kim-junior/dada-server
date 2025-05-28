@@ -70,6 +70,7 @@ export class LongPollingNoticeQueryValidator {
     example: 30,
     required: false,
   })
+  @ValidateIf((o) => o.timeout !== undefined)
   @IsNumber()
   public timeout?: number;
 
@@ -78,6 +79,7 @@ export class LongPollingNoticeQueryValidator {
     example: 10,
     required: false,
   })
+  @ValidateIf((o) => o.timeout !== undefined)
   @IsNumber()
   public lastNoticeId?: number; // 마지막으로 클라이언트가 확인한 공지사항 ID
 
@@ -86,6 +88,7 @@ export class LongPollingNoticeQueryValidator {
     example: 20,
     required: false,
   })
+  @ValidateIf((o) => o.limit !== undefined)
   @IsNumber()
   public limit?: number; // 최대 공지사항 개수
 }
