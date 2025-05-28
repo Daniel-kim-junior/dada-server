@@ -56,7 +56,7 @@ export class ScheduleValidator {
   @ValidateIf((o) => isNonNullish(o.classroomId))
   public classroomId?: number;
 
-  @IsDateString()
+  @IsString()
   @IsNotEmpty()
   public timeData: string;
 }

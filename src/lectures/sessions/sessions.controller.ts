@@ -27,12 +27,11 @@ export class SessionsController {
     @ReqUser() user: RequestUser,
     @Param('id', ParseIntPipe) id: number,
     @Body() param: SessionApplyValidator
-  ): Promise<string> {
+  ): Promise<void> {
     await this._sessionService.applySession({
       ...user,
       sessionId: id,
       ...param,
     });
-    return '세션이 성공적으로 조회되었습니다.';
   }
 }
