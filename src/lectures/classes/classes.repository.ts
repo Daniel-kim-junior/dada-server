@@ -38,8 +38,11 @@ export class ClassesRepositoryDrizzle implements IClassesRepository {
       .from(Classes)
       .innerJoin(Sessions, eq(Sessions.classId, Classes.id))
       .innerJoin(Courses, eq(Courses.sessionId, Sessions.id))
-      .leftJoin(CourseProfiles, eq(CourseProfiles.studentProfileId, profileId))
-      .where(and(eq(Classes.id, id)));
+      .leftJoin(
+        CourseProfiles,
+        and(eq(CourseProfiles.courseId, Courses.id), eq(CourseProfiles.studentProfileId, profileId))
+      )
+      .where(eq(Classes.id, id));
   }
 
   public async getClassById(id: number): Promise<Nullable<Class>> {
