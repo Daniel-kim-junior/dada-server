@@ -16,6 +16,7 @@ import { Course, CourseProfile, CourseProfileStatus } from '../courses/courses.t
 import { Session } from '../sessions/sessions.types';
 import { Nullable } from 'src/common.types';
 import { COURSE_PROFILE_STATUS } from '../courses/courses.constant';
+import { ClassDetailListDto } from './dto';
 
 @Injectable()
 export class ClassesService implements IClassesLoader {
@@ -107,7 +108,7 @@ export class ClassesService implements IClassesLoader {
    */
   public async getClassDetailSchedules(
     param: RequestUser & { classId: number }
-  ): Promise<ClassDetailResponse> {
+  ): Promise<ClassDetailListDto> {
     const { classId, profileId: requestProfileId } = param;
     if (isNullish(requestProfileId)) {
       throw new UnAuthorizedError('프로필이 선택되지 않았습니다. 프로필을 선택해주세요.');
@@ -117,32 +118,7 @@ export class ClassesService implements IClassesLoader {
     if (isEmpty(classDetail)) {
       throw new NotFoundError('존재하지 않는 수업입니다.');
     }
-    const { id, name, description, openDate, closeDate } = classDetail[0].classes;
-
-    return {
-      classId: id,
-      className: name,
-      description,
-      classOpenDate: openDate,
-      classCloseDate: closeDate,
-      /**
-       * 강의 스케줄 정보
-       * 단순 데이터다 예) 김민성 수학 고급 강의
-       * 월요일 10:00 ~ 12:00
-       * 강사명: 김성민
-       * 강의실: 101호(없을수도 있음)
-       * 강의실 ID: 1(없을수도 있음)
-       * 각 스케줄의 강사정보
-       */
-      schedules: classDetail.map((detail) => ({
-        scheduleId: detail.lecture_schedules.scheduleId,
-        timeData: detail.lecture_schedules.timeData,
-        instructorProfileId: detail.lecture_schedules.instructorProfileId,
-        instructorName: detail.profiles.nickname,
-        classroomId: detail.lecture_schedules.classroomId,
-        classroomName: detail.classrooms.name,
-      })),
-    };
+    return ClassDetailListDto.of(classDetail);
   }
 
   public async getClassById(id: number): Promise<Class> {

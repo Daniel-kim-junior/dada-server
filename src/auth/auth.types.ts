@@ -30,11 +30,9 @@ export type Auth = {
   type: string;
 };
 
-export type SignInResponse = {
+export type accessToken = {
   accessToken: string;
 };
 
-export type UserProfileSelectResponse = SignInResponse & {
-  profileId: string;
-  profileRole: ProfileRole;
-};
+
+

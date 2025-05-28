@@ -6,7 +6,6 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  Put,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -20,7 +19,14 @@ import {
 } from './organizations.validator';
 import { Symbols } from 'symbols';
 import { Organization } from './organizations.types';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  OrganizationResponseDto,
+  OrganizationRosterProfileResponseDto,
+  OrganizationRosterResponseDto,
+} from './dto';
 
+@ApiTags('Organizations')
 @Controller('organizations')
 @UseGuards(JwtAuthGuard)
 export class OrganizationsController {
@@ -29,7 +35,16 @@ export class OrganizationsController {
     private readonly _organizationsService: OrganiztionsService
   ) {}
 
+  @ApiBody({
+    type: CreateOrganizationValidator,
+    description: '조직 생성',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '조직을 생성합니다.',
+  })
   @Post()
+  @ApiBearerAuth()
   public async createOrganization(
     @ReqUser() user: RequestUser,
     @Body() param: CreateOrganizationValidator
@@ -37,21 +52,38 @@ export class OrganizationsController {
     await this._organizationsService.createOrganization({ ...user, ...param });
   }
 
+  @ApiResponse({
+    status: 200,
+    description: '내 조직 로스터를 조회합니다.',
+    type: OrganizationRosterResponseDto,
+  })
+  @ApiBearerAuth()
   @Get('/my/rosters')
   public async getMyOrganizationRosters(@ReqUser() user: RequestUser) {
     /**
      * 해당 유저가 속한 조직 목록을 조회합니다
      */
-    return {
-      rosters: await this._organizationsService.getMyOrganizationRosters(user),
-    };
+    return await this._organizationsService.getMyOrganizationRosters(user);
   }
 
+  @ApiResponse({
+    status: 200,
+    description: '모든 조직을 조회합니다.',
+    type: OrganizationResponseDto,
+  })
+  @ApiBearerAuth()
   @Get('/all')
-  public async getAllOrganizations(@ReqUser() user: RequestUser): Promise<Organization[]> {
+  public async getAllOrganizations(@ReqUser() user: RequestUser): Promise<OrganizationResponseDto> {
     return await this._organizationsService.getAllOrganizations(user);
   }
 
+  @ApiParam({ name: 'id', description: '조직 ID' })
+  @ApiResponse({
+    status: 200,
+    description: '조직의 로스터를 조회합니다.',
+    type: OrganizationRosterProfileResponseDto,
+  })
+  @ApiBearerAuth()
   @Get(':id/rosters')
   public async getOrganizationRoster(
     @ReqUser() user: RequestUser,
@@ -63,6 +95,16 @@ export class OrganizationsController {
     });
   }
 
+  @ApiParam({ name: 'id', description: '조직 ID' })
+  @ApiResponse({
+    status: 200,
+    description: '조직의 로스터에 프로필을 추가합니다.',
+  })
+  @ApiBody({
+    type: AddProfileToRosterValidator,
+    description: '조직의 로스터에 프로필을 추가하는 요청',
+  })
+  @ApiBearerAuth()
   @Post(':id/roster')
   public async addProfileToOrganizationRoster(
     @ReqUser() user: RequestUser,
@@ -76,6 +118,16 @@ export class OrganizationsController {
     });
   }
 
+  @ApiParam({ name: 'id', description: '조직 ID' })
+  @ApiResponse({
+    status: 200,
+    description: '조직의 소유권에 프로필을 추가합니다.',
+  })
+  @ApiBody({
+    type: AddProfileToOrganizationOwnershipValidator,
+    description: '조직의 소유권에 프로필을 추가하는 요청',
+  })
+  @ApiBearerAuth()
   @Post(':id/ownership')
   public async addProfileToOrganizationOwnership(
     @ReqUser() user: RequestUser,

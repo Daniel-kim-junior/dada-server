@@ -23,6 +23,14 @@ import { IProfilesLoader } from 'src/users/profiles/profiles.types';
 import { RequestUser } from 'src/auth/auth.types';
 import { Nullable } from 'src/common.types';
 import { ORGANIZATION_OWNERSHIP_ROLES } from './constants';
+import {
+  OrganizationResponseDto,
+  OrganizationRosterDto,
+  OrganizationRosterProfileDto,
+  OrganizationRosterProfileResponseDto,
+  OrganizationRosterResponseDto,
+  OrganizationsDto,
+} from './dto';
 
 @Injectable()
 export class OrganiztionsService
@@ -72,7 +80,7 @@ export class OrganiztionsService
     });
   }
 
-  public async getAllOrganizations(user: RequestUser) {
+  public async getAllOrganizations(user: RequestUser): Promise<OrganizationResponseDto> {
     const { profileId } = user;
     if (isNullish(profileId)) {
       throw new UnAuthorizedError('프로필이 선택되지 않았습니다. 프로필을 선택해주세요.');
@@ -87,17 +95,23 @@ export class OrganiztionsService
       );
     }
 
-    return await this._organizationRepo.findAllOrganizations();
+    const founds = await this._organizationRepo.findAllOrganizations();
+    return {
+      organizations: founds.map((organization) => OrganizationsDto.of(organization)),
+    };
   }
 
-  public async getMyOrganizationRosters(user: RequestUser) {
+  public async getMyOrganizationRosters(user: RequestUser): Promise<OrganizationRosterResponseDto> {
     const { profileId } = user;
     if (isNullish(profileId)) {
       throw new UnAuthorizedError('프로필이 선택되지 않았습니다. 프로필을 선택해주세요.');
     }
 
     const organiztionRosters = await this._organizationRepo.findRostersByProfileId(profileId);
-    return organiztionRosters;
+    const rosterDtos = organiztionRosters.map((roster) => OrganizationRosterDto.of(roster));
+    return {
+      rosters: rosterDtos,
+    };
   }
 
   public async addProfileToOrganizationOwnership(param: AddProfileToOrganizationOwnershipParam) {
@@ -157,7 +171,10 @@ export class OrganiztionsService
     await this._organizationRepo.createOrganizationAndOwnership(param);
   }
 
-  public async getOrganizationRoster(parma: { profileId?: string; organizationId: number }) {
+  public async getOrganizationRoster(parma: {
+    profileId?: string;
+    organizationId: number;
+  }): Promise<OrganizationRosterProfileResponseDto> {
     const { profileId, organizationId } = parma;
     if (isNullish(profileId)) {
       throw new UnAuthorizedError('프로필이 선택되지 않았습니다. 프로필을 선택해주세요.');
@@ -167,7 +184,10 @@ export class OrganiztionsService
       throw new UnAuthorizedError('존재하지 않는 조직입니다.');
     }
 
-    return await this._organizationRepo.findRostersByOrgnizationId(organizationId);
+    const founds = await this._organizationRepo.findRostersByOrgnizationId(organizationId);
+    return {
+      rosterProfiles: founds.map((roster) => OrganizationRosterProfileDto.of(roster)),
+    };
   }
 
   public async addProfileToOrganizationRoster(param: AddProfileToRosterParam) {

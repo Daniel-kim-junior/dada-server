@@ -11,6 +11,7 @@ async function bootstrap() {
     .setDescription('Dada API description')
     .setVersion('1.0')
     .addTag('dada')
+    .addBearerAuth()
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
