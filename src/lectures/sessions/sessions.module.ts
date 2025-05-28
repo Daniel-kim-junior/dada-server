@@ -3,9 +3,11 @@ import { SessionsController } from './sessions.controller';
 import { SessionsService } from './sessions.service';
 import { Symbols } from 'symbols';
 import { SessionsRepositoryDrizzle } from './sessions.repository';
+import { ClassesModule } from '../classes/classes.module';
+import { CoursesModule } from '../courses/courses.module';
 
 @Module({
-  imports: [],
+  imports: [ClassesModule, CoursesModule],
   controllers: [SessionsController],
   providers: [
     {

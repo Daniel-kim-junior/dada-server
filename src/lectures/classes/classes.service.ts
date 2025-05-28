@@ -1,11 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Class, ClassDetailResponse, CreateClassParam, IClassesLoader } from './classes.types';
+import {
+  Class,
+  ClassDetailResponse,
+  CreateClassParam,
+  IClassesLoader,
+  MyClassCoursesAndSessionsResponse,
+} from './classes.types';
 import { Symbols } from 'symbols';
 import { isEmpty, isNullish } from 'remeda';
 import { NotFoundError, UnAuthorizedError } from 'src/errors/errors';
 import { IOrganizationOwnershipLoader } from 'src/organizations/organizations.types';
 import { IClassesRepository } from './classes.repository';
 import { RequestUser } from 'src/auth/auth.types';
+import { Course, CourseProfile, CourseProfileStatus } from '../courses/courses.types';
+import { Session } from '../sessions/sessions.types';
+import { Nullable } from 'src/common.types';
+import { COURSE_PROFILE_STATUS } from '../courses/courses.constant';
 
 @Injectable()
 export class ClassesService implements IClassesLoader {
@@ -15,6 +25,81 @@ export class ClassesService implements IClassesLoader {
     @Inject(Symbols.ClassesRepository)
     private readonly _classesRepo: IClassesRepository
   ) {}
+
+  public async getMyClassCoursesAndSessions(
+    param: RequestUser & { classId: number }
+  ): Promise<MyClassCoursesAndSessionsResponse> {
+    const { classId, profileId: requestProfileId, profileRole } = param;
+    if (isNullish(requestProfileId)) {
+      throw new UnAuthorizedError('프로필이 선택되지 않았습니다. 프로필을 선택해주세요.');
+    }
+    if (profileRole !== 'STUDENT') {
+      throw new UnAuthorizedError('학생 프로필로 로그인해주세요.');
+    }
+    const founds = await this._classesRepo.getMyClassCoursesAndSessionsById(
+      classId,
+      requestProfileId
+    );
+    if (isEmpty(founds)) {
+      throw new NotFoundError('존재하지 않는 수업입니다.');
+    }
+    const courseIdInSessions: {
+      [sessionId: number]: {
+        session: Session;
+        courses: {
+          course: Course;
+          course_profile: Nullable<CourseProfile>;
+        }[];
+      };
+    } = {};
+    founds.map((found) => {
+      const sessionId = found.sessions.id;
+      if (!courseIdInSessions[sessionId]) {
+        courseIdInSessions[sessionId] = {
+          session: found.sessions,
+          courses: [
+            {
+              course: found.courses,
+              course_profile: found.course_profiles ?? null,
+            },
+          ],
+        };
+      } else {
+        courseIdInSessions[sessionId] = {
+          ...courseIdInSessions[sessionId],
+          courses: [
+            ...courseIdInSessions[sessionId].courses,
+            {
+              course: found.courses,
+              course_profile: found.course_profiles ?? null,
+            },
+          ],
+        };
+      }
+    });
+    const sessionCourses: {
+      session: Session;
+      courses: { course: Course; course_profile: CourseProfile }[];
+    }[] = Object.values(courseIdInSessions);
+    return {
+      classId: founds[0].classes.id,
+      className: founds[0].classes.name,
+      classOpenDate: founds[0].classes.openDate,
+      classCloseDate: founds[0].classes.closeDate,
+      description: founds[0].classes.description,
+      sessions: sessionCourses.map((found) => ({
+        sessionId: found.session.id,
+        sessionNumber: found.session.sessionNumber,
+        courses: found.courses.map((f) => ({
+          courseId: f.course.id,
+          courseName: f.course.name,
+          description: f.course.description,
+          status:
+            (f.course_profile?.status as CourseProfileStatus) ?? COURSE_PROFILE_STATUS.PENDING,
+        })),
+      })),
+    };
+  }
 
   /**
    * 수업 상세 조회
@@ -40,10 +125,18 @@ export class ClassesService implements IClassesLoader {
       description,
       classOpenDate: openDate,
       classCloseDate: closeDate,
+      /**
+       * 강의 스케줄 정보
+       * 단순 데이터다 예) 김민성 수학 고급 강의
+       * 월요일 10:00 ~ 12:00
+       * 강사명: 김성민
+       * 강의실: 101호(없을수도 있음)
+       * 강의실 ID: 1(없을수도 있음)
+       * 각 스케줄의 강사정보
+       */
       schedules: classDetail.map((detail) => ({
         scheduleId: detail.lecture_schedules.scheduleId,
-        startTime: detail.lecture_schedules.startTime,
-        endTime: detail.lecture_schedules.endTime,
+        timeData: detail.lecture_schedules.timeData,
         instructorProfileId: detail.lecture_schedules.instructorProfileId,
         instructorName: detail.profiles.nickname,
         classroomId: detail.lecture_schedules.classroomId,

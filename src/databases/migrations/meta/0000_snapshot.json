@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "9c9bd6bc-2a82-416f-ac6c-fc339980c20d",
+  "id": "e794d033-6c9f-4d90-a45d-dcfc3e2fbebc",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "auth": {
@@ -1099,16 +1099,9 @@
           "notNull": true,
           "autoincrement": false
         },
-        "start_time": {
-          "name": "start_time",
-          "type": "varchar(10)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "end_time": {
-          "name": "end_time",
-          "type": "varchar(10)",
+        "time_date": {
+          "name": "time_date",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false

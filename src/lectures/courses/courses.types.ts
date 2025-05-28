@@ -15,11 +15,9 @@ export type ICoursesLoader = {
   getLecturesByCourseId(courseId: number): Promise<LectureAggregateWithoutCourseProfile>;
 };
 
-/**
- * ICoursesProfileLoader는 프로필 ID를 기반으로 수업 데이터를 조회하는 인터페이스입니다.
- */
 export type ICourseProfilesLoader = {
   getActiveLectureAggregateByProfileId(profileId: string): Promise<LectureAggregate[]>;
+  getMyActiveSessionCourseProfiles(profileId: string): Promise<SessionCourseProfiles[]>;
 };
 
 export type LectureAggregate = {
@@ -36,3 +34,28 @@ export type LectureAggregate = {
 export type LectureAggregateWithoutCourseProfile = Omit<LectureAggregate, 'course_profiles'>;
 
 export type CourseProfileStatus = keyof typeof COURSE_PROFILE_STATUS;
+
+export type CourseProfile = {
+  id: number;
+  courseId: number;
+  studentProfileId: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Nullable<Date>;
+};
+
+export type SessionCourseProfiles = {
+  sessions: Session;
+  courses: Course;
+  course_profiles: CourseProfile;
+};
+
+export type AddCourseProfile = {
+  courseId: number;
+  studentProfileId: string;
+};
+
+export type ICourseProfilesMutator = {
+  addCourseProfile(param: AddCourseProfile): Promise<void>;
+};

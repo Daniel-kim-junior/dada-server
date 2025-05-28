@@ -1,37 +1,38 @@
-import { Controller, Delete, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestUser } from 'src/auth/auth.types';
 import { ReqUser } from 'src/decorator/request-user.decorator';
+import { Symbols } from 'symbols';
+import { SessionsService } from './sessions.service';
+import { SessionApplyValidator } from './sessions.validator';
 
+/**
+ * 회차
+ */
 @Controller('sessions')
 @UseGuards(JwtAuthGuard)
 export class SessionsController {
-  @Get(':id')
+  public constructor(
+    @Inject(Symbols.SessionsService) private readonly _sessionService: SessionsService
+  ) {}
+
+  /**
+   * 회차에 어떤 분반에 참가 신청
+   * @param user
+   * @param id 세션
+   * @returns
+   */
+  @Post(':id/apply')
   public async getSessionById(
     @ReqUser() user: RequestUser,
-    @Param('id', ParseIntPipe) id: number
+    @Param('id', ParseIntPipe) id: number,
+    @Body() param: SessionApplyValidator
   ): Promise<string> {
-    // 세션 ID로 상세 조회
+    await this._sessionService.applySession({
+      ...user,
+      sessionId: id,
+      ...param,
+    });
     return '세션이 성공적으로 조회되었습니다.';
-  }
-  @Get('courses')
-  public async getSessionCourses(@ReqUser() user: RequestUser): Promise<string> {
-    // 회차에 속한 분반 목록 조회 쿼리스트링 :id
-    return '회차의 분반 목록이 성공적으로 조회되었습니다.';
-  }
-
-  @Post()
-  public async createSession(@ReqUser() user: RequestUser): Promise<string> {
-    // 회차 생성
-    return '회차가 성공적으로 생성되었습니다.';
-  }
-
-  @Delete(':id')
-  public async deleteSession(
-    @ReqUser() user: RequestUser,
-    @Param('id', ParseIntPipe) id: number
-  ): Promise<string> {
-    // 회차 삭제
-    return '회차가 성공적으로 삭제되었습니다.';
   }
 }
