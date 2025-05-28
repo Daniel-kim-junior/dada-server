@@ -36,8 +36,8 @@ export class ClassesRepositoryDrizzle implements IClassesRepository {
     return await this._db
       .select()
       .from(Classes)
-      .innerJoin(Sessions, eq(Sessions.classId, Classes.id))
-      .innerJoin(Courses, eq(Courses.sessionId, Sessions.id))
+      .leftJoin(Sessions, eq(Sessions.classId, Classes.id))
+      .leftJoin(Courses, eq(Courses.sessionId, Sessions.id))
       .leftJoin(
         CourseProfiles,
         and(eq(CourseProfiles.courseId, Courses.id), eq(CourseProfiles.studentProfileId, profileId))
@@ -55,10 +55,16 @@ export class ClassesRepositoryDrizzle implements IClassesRepository {
     return await this._db
       .select()
       .from(Classes)
-      .innerJoin(LectureSchedules, eq(LectureSchedules.scheduleId, Classes.id))
+      .innerJoin(
+        LectureSchedules,
+        and(
+          eq(LectureSchedules.scheduleId, Classes.id),
+          eq(LectureSchedules.type, SCHEDULE_TYPE.CLASS)
+        )
+      )
       .innerJoin(Profiles, eq(LectureSchedules.instructorProfileId, Profiles.id))
-      .innerJoin(Classrooms, eq(LectureSchedules.classroomId, Classrooms.id))
-      .where(and(eq(Classes.id, id), eq(LectureSchedules.type, SCHEDULE_TYPE.CLASS)));
+      .leftJoin(Classrooms, eq(LectureSchedules.classroomId, Classrooms.id))
+      .where(and(eq(Classes.id, id)));
   }
 
   public async createClass(param: CreateClassParam): Promise<void> {

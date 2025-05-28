@@ -5,9 +5,10 @@ import { Symbols } from 'symbols';
 import { SessionsRepositoryDrizzle } from './sessions.repository';
 import { ClassesModule } from '../classes/classes.module';
 import { CoursesModule } from '../courses/courses.module';
+import { ProfilesModule } from 'src/users/profiles/profiles.module';
 
 @Module({
-  imports: [ClassesModule, CoursesModule],
+  imports: [ClassesModule, CoursesModule, ProfilesModule],
   controllers: [SessionsController],
   providers: [
     {

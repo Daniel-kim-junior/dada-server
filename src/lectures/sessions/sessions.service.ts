@@ -10,6 +10,7 @@ import {
   ICourseProfilesMutator,
   ICoursesLoader,
 } from '../courses/courses.types';
+import { IProfilesLoader } from 'src/users/profiles/profiles.types';
 
 @Injectable()
 export class SessionsService implements ISessionsLoader {
@@ -20,7 +21,8 @@ export class SessionsService implements ISessionsLoader {
     private readonly _courseProfilesLoader: ICourseProfilesLoader,
     @Inject(Symbols.CourseProfilesMutator)
     private readonly _courseProfilesMutator: ICourseProfilesMutator,
-    @Inject(Symbols.CoursesLoader) private readonly _coursesLoader: ICoursesLoader
+    @Inject(Symbols.CoursesLoader) private readonly _coursesLoader: ICoursesLoader,
+    @Inject(Symbols.ProfilesLoader) private readonly _profilesLoader: IProfilesLoader
   ) {}
 
   public async getSessionAndClassById(id: number): Promise<{ sessions: Session; classes: Class }> {
@@ -36,10 +38,15 @@ export class SessionsService implements ISessionsLoader {
     if (isNullish(requestProfileId)) {
       throw new UnAuthorizedError('프로필 선택이 필요합니다');
     }
-
-    if (profileRole !== 'STUDENT') {
-      throw new UnAuthorizedError('학생 프로필만 신청할 수 있습니다');
+    const requestProfile = await this._profilesLoader.getProfileById(requestProfileId);
+    if (isNullish(requestProfile)) {
+      throw new UnAuthorizedError('존재하지 않는 프로필입니다');
     }
+
+    if (!requestProfile.isStudent()) {
+      throw new UnAuthorizedError('학생 프로필로 로그인해주세요');
+    }
+
     const currentClass = await this._classesLoader.getClassById(classId);
     if (isNullish(currentClass)) {
       throw new UnAuthorizedError('존재하지 않는 강의입니다');
