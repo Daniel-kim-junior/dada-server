@@ -4,9 +4,10 @@ import { ClassesController } from './classes.controller';
 import { Symbols } from 'symbols';
 import { OrganizationsModule } from 'src/organizations/organizations.module';
 import { ClassesRepositoryDrizzle } from './classes.repository';
+import { ProfilesModule } from 'src/users/profiles/profiles.module';
 
 @Module({
-  imports: [OrganizationsModule],
+  imports: [OrganizationsModule, ProfilesModule],
   controllers: [ClassesController],
   providers: [
     {

@@ -17,6 +17,7 @@ import { Session } from '../sessions/sessions.types';
 import { Nullable } from 'src/common.types';
 import { COURSE_PROFILE_STATUS } from '../courses/courses.constant';
 import { ClassDetailListDto } from './dto';
+import { IProfilesLoader } from 'src/users/profiles/profiles.types';
 
 @Injectable()
 export class ClassesService implements IClassesLoader {
@@ -24,19 +25,27 @@ export class ClassesService implements IClassesLoader {
     @Inject(Symbols.OrganizationOwnershipLoader)
     private readonly _organizationOwnershipLoader: IOrganizationOwnershipLoader,
     @Inject(Symbols.ClassesRepository)
-    private readonly _classesRepo: IClassesRepository
+    private readonly _classesRepo: IClassesRepository,
+    @Inject(Symbols.ProfilesLoader)
+    private readonly _profilesLoader: IProfilesLoader
   ) {}
 
   public async getMyClassCoursesAndSessions(
     param: RequestUser & { classId: number }
   ): Promise<MyClassCoursesAndSessionsResponse> {
-    const { classId, profileId: requestProfileId, profileRole } = param;
+    const { classId, profileId: requestProfileId } = param;
     if (isNullish(requestProfileId)) {
       throw new UnAuthorizedError('프로필이 선택되지 않았습니다. 프로필을 선택해주세요.');
     }
-    if (profileRole !== 'STUDENT') {
-      throw new UnAuthorizedError('학생 프로필로 로그인해주세요.');
+    const requestProfile = await this._profilesLoader.getProfileById(requestProfileId);
+    if (isNullish(requestProfile)) {
+      throw new UnAuthorizedError('존재하지 않는 프로필입니다');
     }
+
+    if (!requestProfile.isStudent()) {
+      throw new UnAuthorizedError('학생 프로필로 로그인해주세요');
+    }
+
     const founds = await this._classesRepo.getMyClassCoursesAndSessionsById(
       classId,
       requestProfileId
