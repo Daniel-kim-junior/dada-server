@@ -1,5 +1,6 @@
 import { ProfileRole, Profile } from './profiles.types';
 import { PROFILE_ROLES } from './profiles.constant';
+import { PartialProfileResponseDto } from './dto';
 
 export class ProfilesEntity {
   private _createdAt: Date;
@@ -28,16 +29,16 @@ export class ProfilesEntity {
     return entity;
   }
 
-  public toResponse(): Partial<Profile> {
-    return {
-      createdAt: this._createdAt,
-      updatedAt: this._updatedAt,
-      id: this._id,
-      role: this._role,
-      profilePicture: this._profilePicture,
-      nickname: this._nickname,
-      introduction: this._introduction,
-    };
+  public toResponseDTO() {
+    const dto = new PartialProfileResponseDto();
+    dto.createdAt = this._createdAt;
+    dto.updatedAt = this._updatedAt;
+    dto.id = this._id;
+    dto.role = this._role;
+    dto.profilePicture = this._profilePicture;
+    dto.nickname = this._nickname;
+    dto.introduction = this._introduction;
+    return dto;
   }
 
   public isOrganizationAuth(): boolean {

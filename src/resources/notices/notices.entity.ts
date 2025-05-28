@@ -1,3 +1,4 @@
+import { GetNoticesDto, NoticeDto } from './dto';
 import { NoticeAggregate, NoticeType } from './notices.types';
 
 export class NoticeAggregateEntity {
@@ -22,13 +23,13 @@ export class NoticeAggregateEntity {
     return entity;
   }
 
-  public toResponse() {
-    return {
-      title: this._title,
-      content: this._content,
-      createdAt: this._createdAt,
-      updatedAt: this._updatedAt,
-    };
+  public toResponseDto() {
+    const dto = new NoticeDto();
+    dto.title = this._title;
+    dto.content = this._content;
+    dto.createdAt = this._createdAt;
+    dto.updatedAt = this._updatedAt;
+    return dto;
   }
 
   public get id(): number {

@@ -5,10 +5,12 @@ import { ReqUser } from 'src/decorator/request-user.decorator';
 import { Symbols } from 'symbols';
 import { SessionsService } from './sessions.service';
 import { SessionApplyValidator } from './sessions.validator';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 /**
  * 회차
  */
+@ApiTags('Sessions')
 @Controller('sessions')
 @UseGuards(JwtAuthGuard)
 export class SessionsController {
@@ -22,6 +24,20 @@ export class SessionsController {
    * @param id 세션
    * @returns
    */
+  @ApiBody({
+    type: SessionApplyValidator,
+    description: '회차 분반 참가 신청',
+  })
+  @ApiBearerAuth()
+  @ApiParam({
+    name: 'id',
+    description: '회차 ID',
+    type: Number,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '회차 분반 참가 신청을 완료합니다.',
+  })
   @Post(':id/apply')
   public async getSessionById(
     @ReqUser() user: RequestUser,

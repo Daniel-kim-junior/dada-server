@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ClassroomsService } from './classrooms.service';
-import { ClassroomsController } from './classrooms.controller';
 import { Symbols } from 'symbols';
 import { ClassroomRepositoryDrizzle } from './classrooms.repository';
 
@@ -16,6 +15,6 @@ import { ClassroomRepositoryDrizzle } from './classrooms.repository';
       useClass: ClassroomRepositoryDrizzle,
     },
   ],
-  controllers: [ClassroomsController],
+  controllers: [],
 })
 export class ClassroomsModule {}
