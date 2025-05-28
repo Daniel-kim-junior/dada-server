@@ -42,6 +42,7 @@ export const Symbols = {
   SessionsLoader: Symbol.for('SessionsLoader'),
   CoursesLoader: Symbol.for('CoursesLoader'),
   CourseProfilesLoader: Symbol.for('CourseProfilesLoader'),
+  CourseProfilesMutator: Symbol.for('CourseProfileMutator'),
   OrganizationRostersLoader: Symbol.for('OrganizationRostersLoader'),
   RedisProvider: Symbol.for('RedisProvider'),
 };

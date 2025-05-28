@@ -58,15 +58,5 @@ export class ScheduleValidator {
 
   @IsString()
   @IsNotEmpty()
-  @Matches(/^(월|화|수|목|금|토|일) ([01]\d|2[0-3]):([0-5]\d)$/, {
-    message: 'startTime은 "(요일) HH:mm" 형식이어야 합니다 (예: 월 08:00)',
-  })
-  public startTime: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @Matches(/^(월|화|수|목|금|토|일) ([01]\d|2[0-3]):([0-5]\d)$/, {
-    message: 'endTime은 "(요일) HH:mm" 형식이어야 합니다 (예: 금 18:30)',
-  })
-  public endTime: string;
+  public timeData: string;
 }

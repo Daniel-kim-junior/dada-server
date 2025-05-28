@@ -18,8 +18,7 @@ export const LectureSchedules = mysqlTable(
     type: varchar('type', { length: 50 }).notNull(), // 스케줄 유형 (분반/수업)
     classroomId: bigint('classroom_id', { mode: 'number' }), // 강의실 ID
     instructorProfileId: varchar('instructor_profile_id', { length: 36 }).notNull(), // 강사 프로필 ID
-    startTime: varchar('start_time', { length: 10 }).notNull(), // 시작 시간
-    endTime: varchar('end_time', { length: 10 }).notNull(), // 종료 시간
+    timeData: varchar('time_date', { length: 50 }).notNull(), // 시작 시간
     ...DateColumns,
   },
   (table) => ({

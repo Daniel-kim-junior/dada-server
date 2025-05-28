@@ -1,8 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Class, ClassDetail, CreateClassParam } from './classes.types';
+import { Class, ClassMyCoursesAndSessions, ClassDetail, CreateClassParam } from './classes.types';
 import { Symbols } from 'symbols';
 import { Database } from 'src/databases/databases.module';
-import { Classes, Classrooms, LectureSchedules, Profiles } from 'src/databases/schemas';
+import {
+  Classes,
+  Classrooms,
+  CourseProfiles,
+  Courses,
+  LectureSchedules,
+  Profiles,
+  Sessions,
+} from 'src/databases/schemas';
 import { Nullable } from 'src/common.types';
 import { and, eq } from 'drizzle-orm';
 import { isEmpty } from 'remeda';
@@ -12,11 +20,30 @@ export interface IClassesRepository {
   createClass(param: CreateClassParam): Promise<void>;
   getClassById(id: number): Promise<Nullable<Class>>;
   getClassDetailById(id: number): Promise<ClassDetail[]>;
+  getMyClassCoursesAndSessionsById(
+    id: number,
+    profileId: string
+  ): Promise<ClassMyCoursesAndSessions[]>;
 }
 
 @Injectable()
 export class ClassesRepositoryDrizzle implements IClassesRepository {
   public constructor(@Inject(Symbols.Database) private readonly _db: Database) {}
+  public async getMyClassCoursesAndSessionsById(
+    id: number,
+    profileId: string
+  ): Promise<ClassMyCoursesAndSessions[]> {
+    return await this._db
+      .select()
+      .from(Classes)
+      .innerJoin(Sessions, eq(Sessions.classId, Classes.id))
+      .innerJoin(Courses, eq(Courses.sessionId, Sessions.id))
+      .leftJoin(
+        CourseProfiles,
+        and(eq(CourseProfiles.courseId, Courses.id), eq(CourseProfiles.studentProfileId, profileId))
+      )
+      .where(eq(Classes.id, id));
+  }
 
   public async getClassById(id: number): Promise<Nullable<Class>> {
     const found = await this._db.select().from(Classes).where(eq(Classes.id, id));
@@ -49,10 +76,9 @@ export class ClassesRepositoryDrizzle implements IClassesRepository {
         .$returningId();
       await Promise.all(
         schedules.map(async (schedule) => {
-          const { startTime, endTime, instructorProfileId, classroomId } = schedule;
+          const { timeData, instructorProfileId, classroomId } = schedule;
           await tx.insert(LectureSchedules).values({
-            startTime,
-            endTime,
+            timeData,
             scheduleId: classes.id,
             type: SCHEDULE_TYPE.CLASS,
             instructorProfileId,

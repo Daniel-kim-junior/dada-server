@@ -3,6 +3,8 @@ import { CreateClassValidator } from './classes.validator';
 import { Nullable } from 'src/common.types';
 import { Profile } from 'src/users/profiles/profiles.types';
 import { Classroom } from 'src/classrooms/classrooms.types';
+import { Course, CourseProfile, CourseProfileStatus } from '../courses/courses.types';
+import { Session } from '../sessions/sessions.types';
 
 export type CreateClassParam = InstanceType<typeof CreateClassValidator> & RequestUser;
 export type IClassesLoader = {
@@ -22,8 +24,7 @@ export type Class = {
 };
 
 export type LectureSchedule = {
-  startTime: string;
-  endTime: string;
+  timeData: string;
   scheduleId: number;
   type: string;
   instructorProfileId: string;
@@ -44,11 +45,35 @@ export type ClassDetailResponse = {
   classCloseDate: Date;
   description: Nullable<string>;
   schedules: {
-    startTime: string;
-    endTime: string;
+    timeData: string;
     instructorProfileId: string;
     instructorName: string;
     classroomName: Nullable<string>;
     classroomId: Nullable<number>;
+  }[];
+};
+
+export type ClassMyCoursesAndSessions = {
+  classes: Class;
+  courses: Course;
+  sessions: Session;
+  course_profiles?: CourseProfile;
+};
+
+export type MyClassCoursesAndSessionsResponse = {
+  classId: number;
+  className: string;
+  classOpenDate: Date;
+  classCloseDate: Date;
+  description: Nullable<string>;
+  sessions: {
+    sessionId: number;
+    sessionNumber: number;
+    courses: {
+      courseId: number;
+      courseName: string;
+      description: Nullable<string>;
+      status: CourseProfileStatus;
+    }[];
   }[];
 };

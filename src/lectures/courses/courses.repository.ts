@@ -1,5 +1,11 @@
 import { Database } from 'src/databases/databases.module';
-import { Course, LectureAggregate, LectureAggregateWithoutCourseProfile } from './courses.types';
+import {
+  AddCourseProfile,
+  Course,
+  LectureAggregate,
+  LectureAggregateWithoutCourseProfile,
+  SessionCourseProfiles,
+} from './courses.types';
 import { Inject } from '@nestjs/common';
 import { Symbols } from 'symbols';
 import { isEmpty } from 'remeda';
@@ -19,10 +25,44 @@ export type ICoursesRepository = {
    * 강의 ID를 기반으로 강의 정보를 조회
    */
   getLecturesByCourseId(courseId: number): Promise<Nullable<LectureAggregateWithoutCourseProfile>>;
+
+  /**
+   * 프로필 ID를 기반으로 내 프로필 분반에 속한 정보 조회
+   */
+  getMyActiveSessionCourseProfiles(profileId: string): Promise<SessionCourseProfiles[]>;
+
+  /**
+   * 프로필을 분반에 등록
+   */
+  addCourseProfile(param: AddCourseProfile): Promise<void>;
 };
 
 export class CoursesRepositoryDrizzle implements ICoursesRepository {
   public constructor(@Inject(Symbols.Database) private readonly _db: Database) {}
+
+  public async addCourseProfile(param: AddCourseProfile): Promise<void> {
+    const { courseId, studentProfileId } = param;
+    await this._db.insert(CourseProfiles).values({
+      courseId,
+      studentProfileId,
+      status: COURSE_PROFILE_STATUS.WAITING,
+    });
+  }
+  public async getMyActiveSessionCourseProfiles(
+    profileId: string
+  ): Promise<SessionCourseProfiles[]> {
+    return await this._db
+      .select()
+      .from(Courses)
+      .innerJoin(CourseProfiles, eq(Courses.id, CourseProfiles.courseId))
+      .innerJoin(Sessions, eq(Courses.sessionId, Sessions.id))
+      .where(
+        and(
+          eq(CourseProfiles.studentProfileId, profileId),
+          eq(CourseProfiles.status, COURSE_PROFILE_STATUS.APPROVED)
+        )
+      );
+  }
   public async getLecturesByCourseId(
     courseId: number
   ): Promise<Nullable<LectureAggregateWithoutCourseProfile>> {
