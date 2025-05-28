@@ -12,6 +12,7 @@ import {
 } from 'src/custom-validators';
 import { AuthTypes } from './auth.types';
 import { AUTH_TYPES } from './auth.constants';
+import { ApiProperty } from '@nestjs/swagger';
 
 /**
  * Validator for user sign-in
@@ -73,21 +74,46 @@ export class UserSignUpValidator {
 }
 
 export class UserSignInValidator {
+  @ApiProperty({
+    description: '사용자 식별자 (전화번호)',
+    example: '010-1234-5678',
+    required: true,
+    type: String,
+  })
   @IsDefined()
   @IsKoreanPhoneNumber()
   public identifier: string; // 전화번호
 
+  @ApiProperty({
+    description: '사용자 비밀번호',
+    example: 'password123',
+    required: true,
+    type: String,
+  })
   @IsDefined()
   @IsPassword()
   @TransformToPassword()
   public password: Password;
 
+  @ApiProperty({
+    description: '인증 타입',
+    example: 'phoneNumber',
+    required: true,
+    enum: AUTH_TYPES,
+    type: String,
+  })
   @IsDefined()
   @IsIn(AUTH_TYPES)
   public authType: AuthTypes;
 }
 
 export class UserProfileSelectValidator {
+  @ApiProperty({
+    description: '사용자 프로필 ID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+    required: true,
+    type: String,
+  })
   @IsDefined()
   @IsUUID()
   public profileId: string; // 프로필 ID

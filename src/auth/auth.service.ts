@@ -2,13 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Symbols } from 'symbols';
 import { JwtService } from '@nestjs/jwt';
 import { IAuthRepository } from './auth.repository';
-import {
-  JwtPayload,
-  SignInResponse,
-  UserProfileSelectParam,
-  UserProfileSelectResponse,
-  UserSignInParam,
-} from './auth.types';
+import { JwtPayload, UserProfileSelectParam, UserSignInParam } from './auth.types';
 import { isNullish } from 'remeda';
 import { UnAuthorizedError } from 'src/errors/errors';
 import * as bcrypt from 'bcrypt';
@@ -17,6 +11,7 @@ import {
   INotciesCachePermissionService,
   NoticesCachePermissionService,
 } from 'src/resources/notices/\bnotices-cache-permission.service';
+import { SignInResponseDto, UserProfileSelectResponse } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +24,7 @@ export class AuthService {
     private readonly _noticesCachePermissionService: INotciesCachePermissionService
   ) {}
 
-  public async signIn(param: UserSignInParam): Promise<SignInResponse> {
+  public async signIn(param: UserSignInParam): Promise<SignInResponseDto> {
     const { identifier, password, authType } = param;
     // 사용자 인증 로직을 여기에 추가합니다.
 

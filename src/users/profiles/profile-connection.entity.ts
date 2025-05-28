@@ -1,3 +1,4 @@
+import { ConnectionResponseDto } from './dto';
 import { ProfileConnections } from './profiles.types';
 
 export class ProfileConnectionsEntity {
@@ -20,7 +21,7 @@ export class ProfileConnectionsEntity {
     return this._profileConnections.length === 0;
   }
 
-  public toConnectionResponse(profileId: string) {
+  public toConnectionResponse(profileId: string): ConnectionResponseDto {
     return {
       connections: this._profileConnections.map((connection) => ({
         id: connection.id,

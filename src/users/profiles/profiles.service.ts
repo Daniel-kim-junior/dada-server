@@ -6,6 +6,7 @@ import { Symbols } from 'symbols';
 import {
   CreateProfileConnectionParam,
   CreateProfileParam,
+  GetProfileConnectionResponse,
   IProfilesLoader,
   ProfileConnectionStatus,
 } from './profiles.types';
@@ -27,10 +28,10 @@ export class ProfilesService implements IProfilesLoader {
   public async getAllProfiles() {
     const profiles = await this._profilesRepo.getProfiles();
 
-    return profiles.map((profile) => profile.toResponse());
+    return profiles.map((profile) => profile.toResponseDTO());
   }
 
-  public async getProfileConnections(user: RequestUser) {
+  public async getProfileConnections(user: RequestUser): Promise<GetProfileConnectionResponse> {
     const { profileId, profileRole } = user;
 
     if (isNullish(profileId)) {
@@ -62,7 +63,7 @@ export class ProfilesService implements IProfilesLoader {
     const { userId } = user;
     const profiles = await this._profilesRepo.getProfiles(userId);
 
-    return profiles.map((profile) => profile.toResponse());
+    return profiles.map((profile) => profile.toResponseDTO());
   }
 
   public async getProfile(user: RequestUser) {
@@ -74,7 +75,7 @@ export class ProfilesService implements IProfilesLoader {
     if (isNullish(profile)) {
       throw new UnAuthorizedError('존재하지 않는 프로필입니다');
     }
-    return profile.toResponse();
+    return profile.toResponseDTO();
   }
 
   public async getProfileById(profileId: string): Promise<Nullable<ProfilesEntity>> {

@@ -42,3 +42,16 @@ export type IProfilesLoader = {
 
 export type CreateProfileConnectionParam = InstanceType<typeof CreateProfileConnectionValidator> &
   RequestUser;
+
+export type GetProfileConnectionResponse = {
+  connections: {
+    id: number;
+    status: string;
+    createdAt: Date;
+    updatedAt: Date;
+    requesterProfileId: string;
+    targetProfileId: string;
+    isTargetProfile: boolean;
+    isRequesterProfile: boolean;
+  }[];
+};
